@@ -306,9 +306,12 @@ const DEXDashboard = () => (
   </div>
 );
 
-export default DEXDashboard;
-
-// Then, add this line at the end:
-ReactDOM.render(<DEXDashboard />, document.getElementById('root'));
+// Remove the export statement and directly render the component
+ReactDOM.render(
+  <React.StrictMode>
+    <DEXDashboard />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
 
 console.log('Finished rendering App');
