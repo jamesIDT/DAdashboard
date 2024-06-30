@@ -21,6 +21,24 @@ const data = [
       { name: 'Loan Position Management', ongoing: 20, volatility: 75 },
     ],
   },
+  {
+    name: 'CDPs and Stablecoins',
+    explanation: "DA demands driven by collateral ratio updates, stablecoin minting/burning activities, and governance decisions. Extreme market movements can cause system-wide DA spikes.",
+    metrics: [
+      { name: 'Collateral Ratio Updates', ongoing: 30, volatility: 95 },
+      { name: 'Stablecoin Minting/Burning', ongoing: 25, volatility: 80 },
+      { name: 'Governance Parameter Changes', ongoing: 15, volatility: 50 },
+    ],
+  },
+  {
+    name: 'Cross-Chain Operations',
+    explanation: "DA requirements affected by cross-chain asset transfers, state synchronization between chains, and interoperability protocol data. Coordinated cross-chain activities can lead to DA demand surges.",
+    metrics: [
+      { name: 'Asset Transfers', ongoing: 20, volatility: 70 },
+      { name: 'State Synchronization', ongoing: 30, volatility: 90 },
+      { name: 'Interoperability Protocol Data', ongoing: 15, volatility: 60 },
+    ],
+  },
 ];
 
 function MetricBar({ value, max, color }) {
