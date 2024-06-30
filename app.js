@@ -619,7 +619,7 @@ const Scenario = ({ scenario }) => (
   </div>
 );
 
-const DonutChart = ({ data, colors, size = 100 }) => {
+const DonutChart = ({ data, colors, size = 100, onHover, onLeave }) => {
   const total = data.reduce((sum, value) => sum + value, 0);
   let startAngle = 0;
 
@@ -639,7 +639,15 @@ const DonutChart = ({ data, colors, size = 100 }) => {
           
           startAngle = endAngle;
           
-          return <path key={index} d={path} fill={colors[index]} />;
+          return (
+            <path 
+              key={index} 
+              d={path} 
+              fill={colors[index]} 
+              onMouseEnter={() => onHover(index)}
+              onMouseLeave={onLeave}
+            />
+          );
         })}
         <circle r={size/4} fill="white" />
       </g>
@@ -648,9 +656,18 @@ const DonutChart = ({ data, colors, size = 100 }) => {
 };
 
 const SectionPanel = ({ section, data, isActive, onClick }) => {
+  const [hoveredSegment, setHoveredSegment] = React.useState(null);
   const totalOngoing = data.metrics.reduce((sum, metric) => sum + metric.ongoing, 0);
   const chartData = data.metrics.map(metric => metric.ongoing);
   const chartColors = ['#D1D5DB', '#9CA3AF', '#6B7280'];
+
+  const handleHover = (index) => {
+    setHoveredSegment(index);
+  };
+
+  const handleLeave = () => {
+    setHoveredSegment(null);
+  };
 
   return (
     <div 
@@ -660,8 +677,19 @@ const SectionPanel = ({ section, data, isActive, onClick }) => {
       onClick={onClick}
     >
       <h3 className="text-lg font-semibold mb-2">{data.name}</h3>
-      <div className="flex justify-center mb-2">
-        <DonutChart data={chartData} colors={chartColors} size={120} />
+      <div className="flex justify-center mb-2 relative">
+        <DonutChart 
+          data={chartData} 
+          colors={chartColors} 
+          size={120} 
+          onHover={handleHover}
+          onLeave={handleLeave}
+        />
+        {hoveredSegment !== null && (
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 text-xs rounded mt-2">
+            {data.metrics[hoveredSegment].name}: {chartData[hoveredSegment]}
+          </div>
+        )}
       </div>
       <p className="text-sm text-center">Total Ongoing DA: {totalOngoing}</p>
     </div>
