@@ -1,7 +1,5 @@
 console.log('app.js is running');
 
-import React, { useState } from 'react';
-
 const dexData = {
   name: 'Decentralized Exchanges (DEX)',
   explanation: "DA requirements for DEXs are driven by order book updates, trade execution speed, liquidity pool rebalancing, and market dynamics. High-frequency trading, flash crashes, and large market movements can cause significant DA spikes.",
@@ -182,8 +180,8 @@ const SubMetric = ({ subMetric, maxValue, ongoingColor, volatilityColor }) => (
 );
 
 const Metric = ({ metric }) => {
-  const [expanded, setExpanded] = useState(false);
-  const [hoveredSegment, setHoveredSegment] = useState(null);
+  const [expanded, setExpanded] = React.useState(false);
+  const [hoveredSegment, setHoveredSegment] = React.useState(null);
   const ongoingColors = ['#1e40af', '#2563eb', '#3b82f6'];
   const volatilityColors = ['#15803d', '#16a34a', '#22c55e'];
   const hoverColors = ['#1e3a8a', '#1d4ed8', '#2563eb', '#134e5e', '#0f766e', '#15803d'];
@@ -306,7 +304,6 @@ const DEXDashboard = () => (
   </div>
 );
 
-// Remove the export statement and directly render the component
 ReactDOM.render(
   <React.StrictMode>
     <DEXDashboard />
