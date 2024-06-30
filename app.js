@@ -305,3 +305,11 @@ const DEXDashboard = () => (
 );
 
 export default DEXDashboard;
+
+// Add the following lines at the very end of the file
+ReactDOM.render(
+  <React.StrictMode>
+    <DEXDashboard />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
