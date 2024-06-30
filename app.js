@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 console.log('app.js is running');
 
 const dashboardData = {
@@ -8,6 +7,8 @@ const dashboardData = {
     metrics: [
       {
         name: 'Order Book Management',
+        ongoing: 75,
+        volatility: 230,
         subMetrics: [
           { 
             name: 'Order Placement Rate', 
@@ -35,6 +36,8 @@ const dashboardData = {
       },
       {
         name: 'Trade Execution',
+        ongoing: 60,
+        volatility: 270,
         subMetrics: [
           { 
             name: 'Transaction Rate', 
@@ -62,6 +65,8 @@ const dashboardData = {
       },
       {
         name: 'Liquidity Pool Updates',
+        ongoing: 50,
+        volatility: 200,
         subMetrics: [
           { 
             name: 'Pool Rebalancing', 
@@ -610,7 +615,7 @@ const Scenario = ({ scenario }) => (
         onLeave={() => {}}
       />
       <span className="ml-2 text-sm">{scenario.impact}%</span>
-      </div>
+    </div>
   </div>
 );
 
@@ -664,7 +669,7 @@ const SectionPanel = ({ section, data, isActive, onClick }) => {
 };
 
 const DeFiDashboard = () => {
-  const [activeSection, setActiveSection] = useState('dex');
+  const [activeSection, setActiveSection] = React.useState('dex');
 
   const sectionData = dashboardData[activeSection];
   const maxValue = getMaxValue(sectionData.metrics);
