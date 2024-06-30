@@ -1,3 +1,5 @@
+console.log('app.js is running');
+
 import React, { useState } from 'react';
 
 const dexData = {
@@ -306,10 +308,7 @@ const DEXDashboard = () => (
 
 export default DEXDashboard;
 
-// Add the following lines at the very end of the file
-ReactDOM.render(
-  <React.StrictMode>
-    <DEXDashboard />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+// Then, add this line at the end:
+ReactDOM.render(<DEXDashboard />, document.getElementById('root'));
+
+console.log('Finished rendering App');
