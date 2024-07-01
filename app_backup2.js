@@ -1,4 +1,3 @@
-// Your new app.js content 
 console.log('app.js is running');
 
 const dashboardData = {
@@ -8,6 +7,8 @@ const dashboardData = {
     metrics: [
       {
         name: 'Order Book Management',
+        ongoing: 75,
+        volatility: 230,
         subMetrics: [
           { 
             name: 'Order Placement Rate', 
@@ -35,6 +36,8 @@ const dashboardData = {
       },
       {
         name: 'Trade Execution',
+        ongoing: 60,
+        volatility: 270,
         subMetrics: [
           { 
             name: 'Transaction Rate', 
@@ -62,6 +65,8 @@ const dashboardData = {
       },
       {
         name: 'Liquidity Pool Updates',
+        ongoing: 50,
+        volatility: 200,
         subMetrics: [
           { 
             name: 'Pool Rebalancing', 
@@ -610,9 +615,86 @@ const Scenario = ({ scenario }) => (
         onLeave={() => {}}
       />
       <span className="ml-2 text-sm">{scenario.impact}%</span>
-      </div>
+    </div>
   </div>
 );
+
+const DonutChart = ({ data, colors, size = 100, onHover, onLeave }) => {
+  const total = data.reduce((sum, value) => sum + value, 0);
+  let startAngle = 0;
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <g transform={`translate(${size/2},${size/2})`}>
+        {data.map((value, index) => {
+          const angle = (value / total) * 360;
+          const endAngle = startAngle + angle;
+          const largeArcFlag = angle > 180 ? 1 : 0;
+          const x1 = Math.cos(Math.PI * startAngle / 180) * (size/2);
+          const y1 = Math.sin(Math.PI * startAngle / 180) * (size/2);
+          const x2 = Math.cos(Math.PI * endAngle / 180) * (size/2);
+          const y2 = Math.sin(Math.PI * endAngle / 180) * (size/2);
+          
+          const path = `M ${x1} ${y1} A ${size/2} ${size/2} 0 ${largeArcFlag} 1 ${x2} ${y2} L 0 0`;
+          
+          startAngle = endAngle;
+          
+          return (
+            <path 
+              key={index} 
+              d={path} 
+              fill={colors[index]} 
+              onMouseEnter={() => onHover(index)}
+              onMouseLeave={onLeave}
+            />
+          );
+        })}
+        <circle r={size/4} fill="white" />
+      </g>
+    </svg>
+  );
+};
+
+const SectionPanel = ({ section, data, isActive, onClick }) => {
+  const [hoveredSegment, setHoveredSegment] = React.useState(null);
+  const totalOngoing = data.metrics.reduce((sum, metric) => sum + metric.ongoing, 0);
+  const chartData = data.metrics.map(metric => metric.ongoing);
+  const chartColors = ['#D1D5DB', '#9CA3AF', '#6B7280'];
+
+  const handleHover = (index) => {
+    setHoveredSegment(index);
+  };
+
+  const handleLeave = () => {
+    setHoveredSegment(null);
+  };
+
+  return (
+    <div 
+      className={`p-4 rounded-lg cursor-pointer transition-colors duration-200 ${
+        isActive ? 'bg-blue-100 border-2 border-blue-500' : 'bg-gray-100 hover:bg-gray-200'
+      }`}
+      onClick={onClick}
+    >
+      <h3 className="text-lg font-semibold mb-2">{data.name}</h3>
+      <div className="flex justify-center mb-2 relative">
+        <DonutChart 
+          data={chartData} 
+          colors={chartColors} 
+          size={120} 
+          onHover={handleHover}
+          onLeave={handleLeave}
+        />
+        {hoveredSegment !== null && (
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 text-xs rounded mt-2">
+            {data.metrics[hoveredSegment].name}: {chartData[hoveredSegment]}
+          </div>
+        )}
+      </div>
+      <p className="text-sm text-center">Total Ongoing DA: {totalOngoing}</p>
+    </div>
+  );
+};
 
 const DeFiDashboard = () => {
   const [activeSection, setActiveSection] = React.useState('dex');
@@ -621,22 +703,18 @@ const DeFiDashboard = () => {
   const maxValue = getMaxValue(sectionData.metrics);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
+    <div className="p-6 max-w-6xl mx-auto bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">DeFi Data Availability Dashboard</h2>
       
-      <div className="mb-6 flex space-x-4">
-        {Object.keys(dashboardData).map((section) => (
-          <button
-            key={section}
-            className={`px-4 py-2 rounded ${
-              activeSection === section
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-            onClick={() => setActiveSection(section)}
-          >
-            {dashboardData[section].name}
-          </button>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {Object.entries(dashboardData).map(([key, data]) => (
+          <SectionPanel
+            key={key}
+            section={key}
+            data={data}
+            isActive={activeSection === key}
+            onClick={() => setActiveSection(key)}
+          />
         ))}
       </div>
 
