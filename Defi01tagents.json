@@ -1,112 +1,121 @@
 {
-    "dex": {
-      "name": "Decentralized Exchanges",
-      "explanation": "DA requirements for DEXs are driven by order book updates, trade execution speed, liquidity pool rebalancing, and market dynamics. High-frequency trading, flash crashes, and large market movements can cause significant DA spikes.",
-      "metrics": [
-        {
-          "name": "Order Book Management",
-          "ongoing": 230,
-          "volatility": 75,
-          "subMetrics": [
-            {
-              "name": "Order Placement Rate",
-              "ongoing": 90,
-              "volatility": 30,
-              "ongoingExample": "A popular trading pair sees 1000 new limit orders per minute, requiring frequent order book updates.",
-              "volatilityExample": "During a market crash, order placement rate spikes to 10,000 per minute, causing a surge in DA demand."
-            },
-            {
-              "name": "Order Cancellation Rate",
-              "ongoing": 80,
-              "volatility": 25,
-              "ongoingExample": "Traders cancel about 500 orders per minute as part of regular strategy adjustments.",
-              "volatilityExample": "A false rumor causes panic, leading to 5,000 order cancellations per minute."
-            },
-            {
-              "name": "Order Book Depth",
-              "ongoing": 60,
-              "volatility": 20,
-              "ongoingExample": "The order book maintains 1000 price levels on each side, requiring constant updates.",
-              "volatilityExample": "Market makers add liquidity, expanding the order book to 5000 levels per side."
-            }
-          ],
-          "explanation": "Order book management DA increases due to:\n• Higher frequency of order placements and cancellations\n• Deeper order books requiring more data storage and updates\n• Need for real-time synchronization across all nodes\n• Increased complexity in maintaining order book integrity during high volatility"
-        },
-        {
-          "name": "Trade Execution",
-          "ongoing": 270,
-          "volatility": 60,
-          "subMetrics": [
-            {
-              "name": "Transaction Rate",
-              "ongoing": 120,
-              "volatility": 25,
-              "ongoingExample": "The exchange processes 100 trades per second during normal market conditions.",
-              "volatilityExample": "A major news event causes trading volume to spike to 1000 trades per second."
-            },
-            {
-              "name": "Trade Size",
-              "ongoing": 90,
-              "volatility": 20,
-              "ongoingExample": "Average trade size is 1 ETH, requiring standard transaction data.",
-              "volatilityExample": "Large investors enter the market, increasing average trade size to 100 ETH."
-            },
-            {
-              "name": "Slippage Monitoring",
-              "ongoing": 60,
-              "volatility": 15,
-              "ongoingExample": "Slippage is calculated every 5 seconds for active trading pairs.",
-              "volatilityExample": "High volatility requires slippage calculations every 0.5 seconds to protect traders."
-            }
-          ],
-          "explanation": "Trade execution DA spikes due to:\n• Dramatic increase in transaction volume during volatile periods\n• Larger trade sizes requiring more data to process and verify\n• More frequent and complex slippage calculations\n• Need for faster block creation and propagation to handle increased load"
-        },
-        {
-          "name": "Liquidity Pool Updates",
-          "ongoing": 200,
-          "volatility": 50,
-          "subMetrics": [
-            {
-              "name": "Pool Rebalancing",
-              "ongoing": 80,
-              "volatility": 20,
-              "ongoingExample": "Liquidity pools rebalance every 10 minutes to maintain target ratios.",
-              "volatilityExample": "Rapid price changes force pool rebalancing every 30 seconds."
-            },
-            {
-              "name": "Liquidity Provider Actions",
-              "ongoing": 70,
-              "volatility": 15,
-              "ongoingExample": "50 liquidity providers adjust their positions hourly.",
-              "volatilityExample": "A yield farming opportunity causes 500 LPs to adjust positions in minutes."
-            },
-            {
-              "name": "Automated Market Making",
-              "ongoing": 50,
-              "volatility": 15,
-              "ongoingExample": "AMM curves are updated every 100 blocks under normal conditions.",
-              "volatilityExample": "Extreme volatility requires AMM curve updates every 10 blocks."
-            }
-          ],
-          "explanation": "Liquidity pool updates require more DA due to:\n• Frequent rebalancing of pools to maintain desired ratios\n• Increased liquidity provider activities (adding/removing liquidity)\n• More complex and frequent automated market making calculations\n• Need for real-time updates of pool states across the network"
-        }
-      ],
-      "scenarios": [
-        {
-          "name": "Flash Crash",
-          "description": "During a flash crash, DA requirements spike dramatically due to:\n• Sudden influx of sell orders and cancellations\n• Rapid price changes requiring frequent order book updates\n• Potential cascading liquidations in leveraged positions\n• Need for quick dissemination of market data to prevent further panic",
-          "impact": 95
-        },
-        {
-          "name": "New Token Listing",
-          "description": "A popular new token listing increases DA demand due to:\n• Surge in new user registrations and KYC verifications\n• High volume of initial orders populating the order book\n• Rapid liquidity pool creation and initial balancing\n• Increased network traffic for price discovery and initial trading",
-          "impact": 80
-        },
-        {
-          "name": "High-Frequency Trading Event",
-          "description": "HFT events cause DA spikes due to:\n• Extremely high order placement and cancellation rates\n• Need for nanosecond-level timestamp precision\n• Increased demand for ultra-low-latency data propagation\n• Complex algorithmic trading strategies requiring more computational resources",
-          "impact": 90
-        }
-      ]
-    }
+  "dex": {
+    "name": "Decentralized Exchanges",
+    "explanation": "DA requirements for DEXs are driven by order book updates, trade execution speed, liquidity pool rebalancing, and market dynamics. High-frequency trading, flash crashes, and large market movements can cause significant DA spikes.",
+    "metrics": [
+      {
+        "name": "Order Book Management",
+        "ongoing": 230,
+        "volatility": 75,
+        "subMetrics": [
+          {
+            "name": "Order Placement Rate",
+            "ongoing": 90,
+            "volatility": 30,
+            "ongoingExample": "A popular trading pair sees 1000 new limit orders per minute, requiring frequent order book updates.",
+            "volatilityExample": "During a market crash, order placement rate spikes to 10,000 per minute, causing a surge in DA demand.",
+            "assumptions": "Assumes 0.1T agents actively trading across multiple pairs, with advanced trading algorithms and high-frequency trading capabilities."
+          },
+          {
+            "name": "Order Cancellation Rate",
+            "ongoing": 80,
+            "volatility": 25,
+            "ongoingExample": "Traders cancel about 500 orders per minute as part of regular strategy adjustments.",
+            "volatilityExample": "A false rumor causes panic, leading to 5,000 order cancellations per minute.",
+            "assumptions": "Assumes sophisticated trading bots that frequently adjust orders based on market conditions, with a high cancellation rate due to the large number of agents."
+          },
+          {
+            "name": "Order Book Depth",
+            "ongoing": 60,
+            "volatility": 20,
+            "ongoingExample": "The order book maintains 1000 price levels on each side, requiring constant updates.",
+            "volatilityExample": "Market makers add liquidity, expanding the order book to 5000 levels per side.",
+            "assumptions": "Assumes deep liquidity across multiple trading pairs, with numerous market makers and a wide range of limit orders due to the large number of agents."
+          }
+        ],
+        "explanation": "Order book management DA increases due to:\n• Higher frequency of order placements and cancellations\n• Deeper order books requiring more data storage and updates\n• Need for real-time synchronization across all nodes\n• Increased complexity in maintaining order book integrity during high volatility"
+      },
+      {
+        "name": "Trade Execution",
+        "ongoing": 270,
+        "volatility": 60,
+        "subMetrics": [
+          {
+            "name": "Transaction Rate",
+            "ongoing": 120,
+            "volatility": 25,
+            "ongoingExample": "The exchange processes 100 trades per second during normal market conditions.",
+            "volatilityExample": "A major news event causes trading volume to spike to 1000 trades per second.",
+            "assumptions": "Assumes high transaction throughput capabilities to handle the volume from 0.1T agents, with advanced order matching algorithms."
+          },
+          {
+            "name": "Trade Size",
+            "ongoing": 90,
+            "volatility": 20,
+            "ongoingExample": "Average trade size is 1 ETH, requiring standard transaction data.",
+            "volatilityExample": "Large investors enter the market, increasing average trade size to 100 ETH.",
+            "assumptions": "Assumes a mix of retail and institutional traders among the 0.1T agents, with varying trade sizes and frequencies."
+          },
+          {
+            "name": "Slippage Monitoring",
+            "ongoing": 60,
+            "volatility": 15,
+            "ongoingExample": "Slippage is calculated every 5 seconds for active trading pairs.",
+            "volatilityExample": "High volatility requires slippage calculations every 0.5 seconds to protect traders.",
+            "assumptions": "Assumes advanced slippage protection mechanisms to handle the high volume and potential market impact from 0.1T agents."
+          }
+        ],
+        "explanation": "Trade execution DA spikes due to:\n• Dramatic increase in transaction volume during volatile periods\n• Larger trade sizes requiring more data to process and verify\n• More frequent and complex slippage calculations\n• Need for faster block creation and propagation to handle increased load"
+      },
+      {
+        "name": "Liquidity Pool Updates",
+        "ongoing": 200,
+        "volatility": 50,
+        "subMetrics": [
+          {
+            "name": "Pool Rebalancing",
+            "ongoing": 80,
+            "volatility": 20,
+            "ongoingExample": "Liquidity pools rebalance every 10 minutes to maintain target ratios.",
+            "volatilityExample": "Rapid price changes force pool rebalancing every 30 seconds.",
+            "assumptions": "Assumes large and diverse liquidity pools to accommodate the trading volume from 0.1T agents, with frequent rebalancing to maintain optimal ratios."
+          },
+          {
+            "name": "Liquidity Provider Actions",
+            "ongoing": 70,
+            "volatility": 15,
+            "ongoingExample": "50 liquidity providers adjust their positions hourly.",
+            "volatilityExample": "A yield farming opportunity causes 500 LPs to adjust positions in minutes.",
+            "assumptions": "Assumes a significant portion of the 0.1T agents are active liquidity providers, frequently adjusting their positions based on market conditions and yield opportunities."
+          },
+          {
+            "name": "Automated Market Making",
+            "ongoing": 50,
+            "volatility": 15,
+            "ongoingExample": "AMM curves are updated every 100 blocks under normal conditions.",
+            "volatilityExample": "Extreme volatility requires AMM curve updates every 10 blocks.",
+            "assumptions": "Assumes sophisticated AMM algorithms capable of handling the trading volume and market dynamics created by 0.1T agents."
+          }
+        ],
+        "explanation": "Liquidity pool updates require more DA due to:\n• Frequent rebalancing of pools to maintain desired ratios\n• Increased liquidity provider activities (adding/removing liquidity)\n• More complex and frequent automated market making calculations\n• Need for real-time updates of pool states across the network"
+      }
+    ],
+    "scenarios": [
+      {
+        "name": "Flash Crash",
+        "description": "During a flash crash, DA requirements spike dramatically due to:\n• Sudden influx of sell orders and cancellations\n• Rapid price changes requiring frequent order book updates\n• Potential cascading liquidations in leveraged positions\n• Need for quick dissemination of market data to prevent further panic",
+        "impact": 95
+      },
+      {
+        "name": "New Token Listing",
+        "description": "A popular new token listing increases DA demand due to:\n• Surge in new user registrations and KYC verifications\n• High volume of initial orders populating the order book\n• Rapid liquidity pool creation and initial balancing\n• Increased network traffic for price discovery and initial trading",
+        "impact": 80
+      },
+      {
+        "name": "High-Frequency Trading Event",
+        "description": "HFT events cause DA spikes due to:\n• Extremely high order placement and cancellation rates\n• Need for nanosecond-level timestamp precision\n• Increased demand for ultra-low-latency data propagation\n• Complex algorithmic trading strategies requiring more computational resources",
+        "impact": 90
+      }
+    ]
   }
+}

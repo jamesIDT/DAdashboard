@@ -40,7 +40,10 @@ const MetricBar = ({ values, maxValue, colors, onHover, onLeave }) => {
 
 const SubMetric = ({ subMetric, maxValue, ongoingColor, volatilityColor }) => (
   <div className="mb-6">
-    <h5 className="font-medium mb-2">{subMetric.name}</h5>
+    <h5 className="font-medium mb-2 flex items-center">
+      {subMetric.name}
+      <AssumptionsButton assumptions={subMetric.assumptions} />
+    </h5>
     <div className="mb-3">
       <div className="flex items-center mb-1">
         <span className="w-32 text-sm">Ongoing DA:</span>
@@ -370,6 +373,29 @@ const DeFiDashboard = () => {
     </div>
   );
 };
+
+const AssumptionsButton = ({ assumptions }) => {
+  const [showTooltip, setShowTooltip] = React.useState(false);
+
+  return (
+    <div className="relative inline-block ml-2">
+      <button
+        className="text-xs px-2 py-1 rounded bg-gray-200 hover:bg-red-500 hover:text-white transition-colors duration-200"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        ASSUMPTIONS
+      </button>
+      {showTooltip && (
+        <div className="absolute z-10 w-64 p-2 mt-2 text-sm bg-white border border-gray-200 rounded-lg shadow-lg">
+          {assumptions}
+        </div>
+      )}
+    </div>
+  );
+};
+
+
 
 ReactDOM.render(
   <React.StrictMode>
