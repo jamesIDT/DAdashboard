@@ -1,5 +1,23 @@
 console.log('app.js is running');
 
+const IntroductionSection = ({ introduction }) => {
+  return (
+    <div className="mb-8 p-6 bg-gray-100 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Introduction to Data Availability in DeFi</h2>
+      <p className="mb-4">{introduction.summary}</p>
+      <h3 className="text-lg font-semibold mb-2">{introduction.comparisonTitle}</h3>
+      <ul className="list-disc pl-5">
+        {introduction.comparisonPoints.map((point, index) => (
+          <li key={index} className="mb-2">
+            <span className="font-semibold">{point.title}:</span> {point.description}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-4">{introduction.conclusion}</p>
+    </div>
+  );
+};
+
 const getMaxValue = (metrics) => {
   return Math.max(...metrics.flatMap(metric => 
     metric.subMetrics.reduce((sum, subMetric) => ({
@@ -296,6 +314,7 @@ const DeFiDashboard = () => {
   const [activeSection, setActiveSection] = React.useState('dex');
   const [viewMode, setViewMode] = React.useState('ongoing');
   const [currentDataset, setCurrentDataset] = React.useState('100');
+  const [introductionData, setIntroductionData] = React.useState(null);
 
   const datasetOptions = [
     { value: '100', label: '100 Agents', filename: 'Defi100agents.json' },
@@ -310,13 +329,19 @@ const DeFiDashboard = () => {
     return await response.json();
   };
 
+  const fetchIntroduction = async () => {
+    const response = await fetch('introduction.json');
+    return await response.json();
+  };
+
   const [dashboardData, setDashboardData] = React.useState(null);
 
   React.useEffect(() => {
     fetchData(currentDataset).then(setDashboardData);
+    fetchIntroduction().then(setIntroductionData);
   }, [currentDataset]);
 
-  if (!dashboardData) return <div>Loading...</div>;
+  if (!dashboardData || !introductionData) return <div>Loading...</div>;
 
   const sectionData = dashboardData[activeSection];
   const maxValue = getMaxValue(sectionData.metrics);
@@ -334,6 +359,8 @@ const DeFiDashboard = () => {
   return (
     <div className="p-6 max-w-6xl mx-auto bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">DeFi Data Availability Dashboard</h2>
+      
+      <IntroductionSection introduction={introductionData} />
       
       <div className="mb-4 flex justify-between items-center">
         <div>
