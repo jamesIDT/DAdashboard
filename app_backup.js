@@ -2,7 +2,7 @@ console.log('app.js is running');
 
 const dashboardData = {
   dex: {
-    name: 'Decentralized Exchanges (DEX)',
+    name: 'Decentralized Exchanges',
     explanation: "DA requirements for DEXs are driven by order book updates, trade execution speed, liquidity pool rebalancing, and market dynamics. High-frequency trading, flash crashes, and large market movements can cause significant DA spikes.",
     metrics: [
       {
@@ -290,6 +290,35 @@ const dashboardData = {
         subMetrics: [
           { 
             name: 'Stability Fee Adjustments', 
+            ongoing: 20, 
+            volatility: 60,
+            ongoingExample: "Stability fees are adjusted weekly through governance votes.",
+            volatilityExample: "Emergency fee adjustments implemented rapidly during crisis events."
+          },
+          { 
+            name: 'Debt Ceiling Management', 
+            ongoing: 15, 
+            volatility: 45,
+            ongoingExample: "Debt ceilings are reviewed and adjusted monthly.",
+            volatilityExample: "Real-time debt ceiling adjustments to manage system risk during volatility."
+          },
+          { 
+            name: 'Collateral Type Onboarding', 
+            ongoing: 15, 
+            volatility: 45,
+            ongoingExample: "New collateral types are added quarterly after thorough review.",
+            volatilityExample: "Rapid integration of safe-haven assets during market-wide instability."
+          },
+        ],
+        explanation: "Governance and parameter updates require more DA due to:\n• Implementation of complex, multi-step governance decisions\n• Need for rapid parameter adjustments during market stress\n• System-wide updates for new collateral types or risk parameters\n• Increased monitoring and simulation of parameter impacts on system stability"
+      },
+      {
+        name: 'Governameters',
+        ongoing: 1150,
+        volatility: 1150,
+        subMetrics: [
+          { 
+            name: 'Stabitments', 
             ongoing: 20, 
             volatility: 60,
             ongoingExample: "Stability fees are adjusted weekly through governance votes.",
@@ -619,7 +648,7 @@ const Scenario = ({ scenario }) => (
   </div>
 );
 
-const DonutChart = ({ data, colors, size = 100 }) => {
+const DonutChart = ({ data, colors, size = 100, onHover, onLeave }) => {
   const total = data.reduce((sum, value) => sum + value, 0);
   let startAngle = 0;
 
@@ -639,7 +668,15 @@ const DonutChart = ({ data, colors, size = 100 }) => {
           
           startAngle = endAngle;
           
-          return <path key={index} d={path} fill={colors[index]} />;
+          return (
+            <path 
+              key={index} 
+              d={path} 
+              fill={colors[index]} 
+              onMouseEnter={() => onHover(index)}
+              onMouseLeave={onLeave}
+            />
+          );
         })}
         <circle r={size/4} fill="white" />
       </g>
@@ -647,36 +684,93 @@ const DonutChart = ({ data, colors, size = 100 }) => {
   );
 };
 
-const SectionPanel = ({ section, data, isActive, onClick }) => {
-  const totalOngoing = data.metrics.reduce((sum, metric) => sum + metric.ongoing, 0);
-  const chartData = data.metrics.map(metric => metric.ongoing);
-  const chartColors = ['#D1D5DB', '#9CA3AF', '#6B7280'];
+const SectionPanel = ({ section, data, isActive, onClick, viewMode, totalDA, maxTotalDA }) => {
+  const [hoveredSegment, setHoveredSegment] = React.useState(null);
+  const chartData = data.metrics.map(metric => metric[viewMode]);
+  const chartColors = ['#D1D5DB', '#9CA3AF', '#6B7280', '#4B5563', '#374151'];
+
+  const handleHover = (index) => {
+    setHoveredSegment(index);
+  };
+
+  const handleLeave = () => {
+    setHoveredSegment(null);sectionTotals
+  };
+
+  // Calculate background color intensity based on total DA
+  const backgroundIntensity = Math.floor((totalDA / maxTotalDA) * 100);
+  const backgroundColor = viewMode === 'ongoing' 
+    ? `rgb(${220 - backgroundIntensity}, ${220 - backgroundIntensity}, ${220 - backgroundIntensity})`
+    : `rgb(${220 - backgroundIntensity}, ${200 - backgroundIntensity}, ${200 - backgroundIntensity})`;
 
   return (
     <div 
       className={`p-4 rounded-lg cursor-pointer transition-colors duration-200 ${
-        isActive ? 'bg-blue-100 border-2 border-blue-500' : 'bg-gray-100 hover:bg-gray-200'
+        isActive ? 'border-2 border-blue-500' : ''
       }`}
+      style={{ 
+        backgroundColor,
+        boxShadow: isActive ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none'
+      }}
       onClick={onClick}
     >
       <h3 className="text-lg font-semibold mb-2">{data.name}</h3>
-      <div className="flex justify-center mb-2">
-        <DonutChart data={chartData} colors={chartColors} size={120} />
+      <div className="flex justify-center mb-2 relative">
+        <DonutChart 
+          data={chartData} 
+          colors={chartColors} 
+          size={120} 
+          onHover={handleHover}
+          onLeave={handleLeave}
+        />
+        {hoveredSegment !== null && (
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 text-xs rounded mt-2">
+            {data.metrics[hoveredSegment].name}: {chartData[hoveredSegment]}
+          </div>
+        )}
       </div>
-      <p className="text-sm text-center">Total Ongoing DA: {totalOngoing}</p>
+      <p className="text-sm text-center">Total {viewMode === 'ongoing' ? 'Ongoing' : 'Volatility'} DA: {totalDA}</p>
     </div>
   );
 };
 
 const DeFiDashboard = () => {
   const [activeSection, setActiveSection] = React.useState('dex');
+  const [viewMode, setViewMode] = React.useState('ongoing');
 
   const sectionData = dashboardData[activeSection];
   const maxValue = getMaxValue(sectionData.metrics);
 
+  // Calculate the total DA for each section
+  const sectionTotals = Object.entries(dashboardData).reduce((acc, [key, data]) => {
+    acc[key] = {
+      ongoing: data.metrics.reduce((sum, metric) => sum + metric.ongoing, 0),
+      volatility: data.metrics.reduce((sum, metric) => sum + metric.volatility, 0)
+    };
+    return acc;
+  }, {});
+
+  // Find the maximum total DA across all sections
+  const maxTotal = Math.max(...Object.values(sectionTotals).flatMap(total => [total.ongoing, total.volatility]));
+
   return (
     <div className="p-6 max-w-6xl mx-auto bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">DeFi Data Availability Dashboard</h2>
+      
+      <div className="mb-4 flex justify-center">
+        <button
+          className={`px-4 py-2 rounded-l ${viewMode === 'ongoing' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+          onClick={() => setViewMode('ongoing')}
+        >
+          Ongoing DA
+        </button>
+        <button
+          className={`px-4 py-2 rounded-r ${viewMode === 'volatility' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+          onClick={() => setViewMode('volatility')}
+        >
+          Volatility DA
+        </button>
+      </div>
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {Object.entries(dashboardData).map(([key, data]) => (
@@ -686,13 +780,16 @@ const DeFiDashboard = () => {
             data={data}
             isActive={activeSection === key}
             onClick={() => setActiveSection(key)}
+            viewMode={viewMode}
+            totalDA={sectionTotals[key][viewMode]}
+            maxTotalDA={maxTotal}
           />
         ))}
       </div>
 
       <h3 className="text-2xl font-bold mb-4 text-gray-700">{sectionData.name}</h3>
       <p className="mb-8 text-gray-600">{sectionData.explanation}</p>
-      
+
       <h4 className="text-xl font-semibold mb-6 text-gray-700">Key Metrics</h4>
       <div className="space-y-6">
         {sectionData.metrics.map((metric, index) => (
