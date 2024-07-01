@@ -38,6 +38,27 @@ const MetricBar = ({ values, maxValue, colors, onHover, onLeave }) => {
   );
 };
 
+const AssumptionsButton = ({ assumptions }) => {
+  const [showTooltip, setShowTooltip] = React.useState(false);
+
+  return (
+    <div className="relative inline-block ml-2">
+      <button
+        className="text-xs px-2 py-1 rounded bg-gray-200 hover:bg-red-500 hover:text-white transition-colors duration-200"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        ASSUMPTIONS
+      </button>
+      {showTooltip && (
+        <div className="absolute z-10 w-64 p-2 mt-2 text-sm bg-white border border-gray-200 rounded-lg shadow-lg">
+          {assumptions}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const SubMetric = ({ subMetric, maxValue, ongoingColor, volatilityColor }) => (
   <div className="mb-6">
     <h5 className="font-medium mb-2 flex items-center">
@@ -215,7 +236,7 @@ const DonutChart = ({ data, colors, size = 100, onHover, onLeave }) => {
   );
 };
 
-const SectionPanel = ({ section, data, isActive, onClick, viewMode, totalDA, maxTotalDA }) => {
+const EnhancedSectionPanel = ({ section, data, isActive, onClick, viewMode, totalDA, maxTotalDA }) => {
   const [hoveredSegment, setHoveredSegment] = React.useState(null);
   const chartData = data.metrics.map(metric => metric[viewMode]);
   const chartColors = ['#D1D5DB', '#9CA3AF', '#6B7280', '#4B5563', '#374151'];
@@ -228,38 +249,45 @@ const SectionPanel = ({ section, data, isActive, onClick, viewMode, totalDA, max
     setHoveredSegment(null);
   };
 
-  const backgroundIntensity = Math.floor((totalDA / maxTotalDA) * 100);
-  const backgroundColor = viewMode === 'ongoing' 
-    ? `rgb(${220 - backgroundIntensity}, ${220 - backgroundIntensity}, ${220 - backgroundIntensity})`
-    : `rgb(${220 - backgroundIntensity}, ${200 - backgroundIntensity}, ${200 - backgroundIntensity})`;
+  const overlayHeight = `${(totalDA / maxTotalDA) * 100}%`;
+  const overlayColor = viewMode === 'ongoing' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(239, 68, 68, 0.1)';
 
   return (
     <div 
-      className={`p-4 rounded-lg cursor-pointer transition-colors duration-200 ${
+      className={`p-4 rounded-lg cursor-pointer transition-all duration-200 relative overflow-hidden ${
         isActive ? 'border-2 border-blue-500' : ''
       }`}
       style={{ 
-        backgroundColor,
+        backgroundColor: '#f3f4f6',
         boxShadow: isActive ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none'
       }}
       onClick={onClick}
     >
-      <h3 className="text-lg font-semibold mb-2">{data.name}</h3>
-      <div className="flex justify-center mb-2 relative">
-        <DonutChart 
-          data={chartData} 
-          colors={chartColors} 
-          size={120} 
-          onHover={handleHover}
-          onLeave={handleLeave}
-        />
-        {hoveredSegment !== null && (
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 text-xs rounded mt-2">
-            {data.metrics[hoveredSegment].name}: {chartData[hoveredSegment]}
-          </div>
-        )}
+      <div 
+        className="absolute bottom-0 left-0 right-0 transition-all duration-200"
+        style={{
+          height: overlayHeight,
+          backgroundColor: overlayColor,
+        }}
+      />
+      <div className="relative z-10">
+        <h3 className="text-lg font-semibold mb-2">{data.name}</h3>
+        <div className="flex justify-center mb-2 relative">
+          <DonutChart 
+            data={chartData} 
+            colors={chartColors} 
+            size={120} 
+            onHover={handleHover}
+            onLeave={handleLeave}
+          />
+          {hoveredSegment !== null && (
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 text-xs rounded mt-2">
+              {data.metrics[hoveredSegment].name}: {chartData[hoveredSegment]}
+            </div>
+          )}
+        </div>
+        <p className="text-sm text-center">Total {viewMode === 'ongoing' ? 'Ongoing' : 'Volatility'} DA: {totalDA}</p>
       </div>
-      <p className="text-sm text-center">Total {viewMode === 'ongoing' ? 'Ongoing' : 'Volatility'} DA: {totalDA}</p>
     </div>
   );
 };
@@ -341,7 +369,7 @@ const DeFiDashboard = () => {
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {Object.entries(dashboardData).map(([key, data]) => (
-          <SectionPanel
+          <EnhancedSectionPanel
             key={key}
             section={key}
             data={data}
@@ -373,29 +401,6 @@ const DeFiDashboard = () => {
     </div>
   );
 };
-
-const AssumptionsButton = ({ assumptions }) => {
-  const [showTooltip, setShowTooltip] = React.useState(false);
-
-  return (
-    <div className="relative inline-block ml-2">
-      <button
-        className="text-xs px-2 py-1 rounded bg-gray-200 hover:bg-red-500 hover:text-white transition-colors duration-200"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-      >
-        ASSUMPTIONS
-      </button>
-      {showTooltip && (
-        <div className="absolute z-10 w-64 p-2 mt-2 text-sm bg-white border border-gray-200 rounded-lg shadow-lg">
-          {assumptions}
-        </div>
-      )}
-    </div>
-  );
-};
-
-
 
 ReactDOM.render(
   <React.StrictMode>
