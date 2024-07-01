@@ -264,10 +264,18 @@ const SectionPanel = ({ section, data, isActive, onClick, viewMode, totalDA, max
 const DeFiDashboard = () => {
   const [activeSection, setActiveSection] = React.useState('dex');
   const [viewMode, setViewMode] = React.useState('ongoing');
-  const [currentDataset, setCurrentDataset] = React.useState(0);
+  const [currentDataset, setCurrentDataset] = React.useState('100');
 
-  const fetchData = async (datasetIndex) => {
-    const response = await fetch(`dashboardData${datasetIndex + 1}.json`);
+  const datasetOptions = [
+    { value: '100', label: '100 Agents', filename: 'Defi100agents.json' },
+    { value: '100k', label: '100k Agents', filename: 'Defi100kagents.json' },
+    { value: '100M', label: '100M Agents', filename: 'Defi100magents.json' },
+    { value: '0.1T', label: '0.1T Agents', filename: 'Defi01tagents.json' },
+  ];
+
+  const fetchData = async (datasetValue) => {
+    const dataset = datasetOptions.find(option => option.value === datasetValue);
+    const response = await fetch(dataset.filename);
     return await response.json();
   };
 
@@ -311,16 +319,25 @@ const DeFiDashboard = () => {
             Volatility DA
           </button>
         </div>
-        <button
-          className="px-4 py-2 bg-green-500 text-white rounded"
-          onClick={() => setCurrentDataset((currentDataset + 1) % 2)}
-        >
-          Switch Dataset
-        </button>
+        <div className="flex space-x-4">
+          {datasetOptions.map((option) => (
+            <label key={option.value} className="inline-flex items-center">
+              <input
+                type="radio"
+                className="form-radio"
+                name="dataset"
+                value={option.value}
+                checked={currentDataset === option.value}
+                onChange={() => setCurrentDataset(option.value)}
+              />
+              <span className="ml-2">{option.label}</span>
+            </label>
+          ))}
+        </div>
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-      {Object.entries(dashboardData).map(([key, data]) => (
+        {Object.entries(dashboardData).map(([key, data]) => (
           <SectionPanel
             key={key}
             section={key}
