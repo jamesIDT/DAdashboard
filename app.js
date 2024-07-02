@@ -1,22 +1,78 @@
 console.log('app.js is running');
 
+const parseBoldText = (text) => {
+  const parts = text.split(/(\*\*.*?\*\*)/);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+};
+
 const IntroductionSection = ({ introduction }) => {
+  const [minimized, setMinimized] = React.useState(false);
+
+  const toggleMinimize = () => {
+    setMinimized(!minimized);
+  };
+
   return (
-    <div className="mb-8 p-6 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Introduction to Data Availability in DeFi</h2>
-      <p className="mb-4">{introduction.summary}</p>
-      <h3 className="text-lg font-semibold mb-2">{introduction.comparisonTitle}</h3>
-      <ul className="list-disc pl-5">
-        {introduction.comparisonPoints.map((point, index) => (
-          <li key={index} className="mb-2">
-            <span className="font-semibold">{point.title}:</span> {point.description}
-          </li>
-        ))}
-      </ul>
-      <p className="mt-4">{introduction.conclusion}</p>
+    <div className="mb-8 p-6 bg-gray-100 rounded-lg shadow-md relative">
+      <button
+        onClick={toggleMinimize}
+        className="absolute top-4 right-4 bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700 transition-colors"
+      >
+        {minimized ? 'Expand' : 'Minimize'}
+      </button>
+      {!minimized && (
+        <>
+          <h2 className="text-xl font-semibold mb-4">Introduction to Data Availability in DeFi</h2>
+          <p className="mb-4">{parseBoldText(introduction.summary)}</p>
+
+          <div className="mb-6 p-4 bg-white rounded-lg shadow-sm">
+            <h3 className="text-lg font-semibold mb-2">{introduction.futureWorld.title}</h3>
+            <p className="mb-4">{introduction.futureWorld.description}</p>
+          </div>
+
+          <div className="mb-6 p-4 bg-white rounded-lg shadow-sm">
+            <h3 className="text-lg font-semibold mb-2">{introduction.comparisonTitle}</h3>
+            <ul className="list-disc pl-5">
+              {introduction.comparisonPoints.map((point, index) => (
+                <li key={index} className="mb-2">
+                  <span className="font-semibold">{point.title}:</span> {point.description}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex flex-wrap justify-between space-y-6 space-x-0 md:space-x-6 md:space-y-0 mb-6">
+            <div className="flex-1 p-4 bg-white rounded-lg shadow-sm">
+              <h3 className="text-lg font-semibold mb-2">{introduction.ongoingAndVolatilityDA.title}</h3>
+              <p className="mb-4">{parseBoldText(introduction.ongoingAndVolatilityDA.description)}</p>
+            </div>
+
+            <div className="flex-1 p-4 bg-white rounded-lg shadow-sm">
+              <h3 className="text-lg font-semibold mb-2">{introduction.scalingDA.title}</h3>
+              <p className="mb-4">{parseBoldText(introduction.scalingDA.description)}</p>
+            </div>
+
+            <div className="flex-1 p-4 bg-white rounded-lg shadow-sm">
+              <h3 className="text-lg font-semibold mb-2">{introduction.multiChainDA.title}</h3>
+              <p className="mb-4">{parseBoldText(introduction.multiChainDA.description)}</p>
+            </div>
+          </div>
+        </>
+      )}
+      {minimized && (
+        <>
+          <h2 className="text-xl font-semibold mb-4">Introduction to Data Availability in DeFi</h2>
+        </>
+      )}
     </div>
   );
 };
+
 
 const getMaxValue = (metrics) => {
   return Math.max(...metrics.flatMap(metric => 

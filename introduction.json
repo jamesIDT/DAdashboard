@@ -1,15 +1,31 @@
 {
-    "summary": "Data availability (DA) in blockchain refers to the ability of all network participants to access and verify transaction data essential for validating the blockchain's state. This concept is crucial in decentralized finance (DeFi), where rapid and accurate data access underpins the system's integrity and functionality.",
-    "comparisonTitle": "Understanding Data Availability vs. Data Storage",
-    "comparisonPoints": [
-      {
-        "title": "Data Availability",
-        "description": "Ensures data can be accessed and verified by all network participants in real-time. It's about rapid, consistent data propagation, crucial for maintaining consensus across the network."
-      },
-      {
-        "title": "Data Storage",
-        "description": "Involves storing data for long-term access but does not guarantee rapid availability or accessibility. Storage is important for historical data but differs in immediacy and necessity compared to DA."
-      }
-    ],
-    "conclusion": "In a DeFi environment, especially with AI-driven autonomous agents, the distinction becomes critical. While storage holds the data, availability ensures it can be used for real-time decision-making and transactions."
+  "summary": "Data availability (DA) in blockchain refers to the ability of all network participants to access and verify transaction data essential for validating the blockchain's state. This concept is crucial in decentralized finance (DeFi), where rapid and accurate data access underpins the system's integrity and functionality. **This dashboard explores data availability within four DeFi verticals.**",
+  "futureWorld": {
+    "title": "A Future World with Autonomous AI Agents",
+    "description": "The DA landscape gets complex when considering agents that would interact with blockchains specialized for different functions—money (e.g., Bitcoin), smart contracts (e.g., Ethereum), compute (e.g., Akash), and data storage (e.g., Arweave). Cross-chain interactions and the need for real-time asset transfers require robust DA solutions."
+  },
+  "comparisonTitle": "Understanding Data Availability vs. Data Storage",
+  "comparisonPoints": [
+    {
+      "title": "Data Availability",
+      "description": "Ensures data can be accessed and verified by all network participants in real-time. It's about rapid, consistent data propagation, crucial for maintaining consensus across the network. For example, in a DeFi protocol, DA allows for instant verification of transactions and liquidity pool updates."
+    },
+    {
+      "title": "Data Storage",
+      "description": "Involves storing data for long-term access but does not guarantee rapid availability or accessibility. Storage is important for historical data but differs in immediacy and necessity compared to DA. For instance, historical trade data in a DEX is stored but not immediately needed for ongoing operations."
+    }
+  ],
+  "conclusion": "In a DeFi environment, especially with AI-driven autonomous agents, the distinction becomes critical. While storage holds the data, availability ensures it can be used for real-time decision-making and transactions. There is a button to switch between ongoing and volatility DA on the dashboard.",
+  "ongoingAndVolatilityDA": {
+    "title": "Ongoing vs. Volatility Data Availability",
+    "description": "DA requirements in DeFi are not static. While ongoing DA represents the regular, day-to-day data needs, volatility DA accounts for spikes during market turbulence. This distinction is crucial as it ensures the system can handle high data loads during periods of extreme activity, such as flash crashes or large-scale liquidations. **There is a button to switch between these two environments on the dashboard.**"
+  },
+  "scalingDA": {
+    "title": "Scaling Data Availability Requirements",
+    "description": "As the number of autonomous agents grows, DA requirements can scale exponentially. High-frequency trading, complex financial instruments like futures and options, and cross-chain operations all contribute to increasing DA needs. While edge cases currently drive most DA demands, a future with millions of active agents would push these requirements to new heights. It's essential to plan for this scalability to maintain network performance and security. **Radio buttons are available to show how DA requirements change as agent numbers scale.**"
+  },
+  "multiChainDA": {
+    "title": "Data Availability Across Multiple Chains",
+    "description": "DA in a multi-chain environment means that activity is likely to be spread across various chains, each specializing in different functions. Ensuring consistent DA across these chains is crucial for seamless operations and interoperability. Solutions like Data Availability Sampling (DAS) and cross-chain data protocols help maintain high DA levels. **The dashboard illustrates how DA gets used up across myriad chains.**"
   }
+}
