@@ -78,7 +78,7 @@ const AssumptionsButton = ({ assumptions }) => {
 };
 
 const SubMetric = ({ subMetric, maxValue, ongoingColor, volatilityColor }) => (
-  <div className="mb-6">
+  <div className="mb-6 p-4 bg-gray-100 rounded-lg border border-gray-200">
     <h5 className="font-medium mb-2 flex items-center">
       {subMetric.name}
       <AssumptionsButton assumptions={subMetric.assumptions} />
@@ -93,7 +93,7 @@ const SubMetric = ({ subMetric, maxValue, ongoingColor, volatilityColor }) => (
           onHover={() => {}}
           onLeave={() => {}}
         />
-        <span className="ml-2 text-sm">{subMetric.ongoing}</span>
+        <span className="ml-2 text-sm">{subMetric.ongoing} kB/s</span>
       </div>
       <p className="text-xs text-gray-600 ml-32">{subMetric.ongoingExample}</p>
     </div>
@@ -107,7 +107,7 @@ const SubMetric = ({ subMetric, maxValue, ongoingColor, volatilityColor }) => (
           onHover={() => {}}
           onLeave={() => {}}
         />
-        <span className="ml-2 text-sm">{subMetric.volatility}</span>
+        <span className="ml-2 text-sm">{subMetric.volatility} kB/s</span>
       </div>
       <p className="text-xs text-gray-600 ml-32">{subMetric.volatilityExample}</p>
     </div>
@@ -117,9 +117,10 @@ const SubMetric = ({ subMetric, maxValue, ongoingColor, volatilityColor }) => (
 const Metric = ({ metric, maxValue }) => {
   const [expanded, setExpanded] = React.useState(false);
   const [hoveredSegment, setHoveredSegment] = React.useState(null);
-  const ongoingColors = ['#1e40af', '#2563eb', '#3b82f6'];
-  const volatilityColors = ['#15803d', '#16a34a', '#22c55e'];
-  const hoverColors = ['#1e3a8a', '#1d4ed8', '#2563eb', '#134e5e', '#0f766e', '#15803d'];
+  const ongoingColors = ['#1e40af', '#1f51c3', '#2563eb', '#2e74f1', '#3b82f6'];
+  const volatilityColors = ['#15803d', '#159848', '#16a34a', '#1bbd57', '#22c55e'];
+  const hoverColors = ['#cccccc', '#cccccc', '#cccccc', '#cccccc', '#cccccc', '#cccccc', '#cccccc', '#cccccc', '#cccccc', '#cccccc'];
+
 
   const ongoingValues = metric.subMetrics.map(sm => sm.ongoing);
   const volatilityValues = metric.subMetrics.map(sm => sm.volatility);
@@ -200,24 +201,6 @@ const Metric = ({ metric, maxValue }) => {
   );
 };
 
-const Scenario = ({ scenario }) => (
-  <div className="mb-6 p-4 bg-gray-100 rounded-lg">
-    <h4 className="font-semibold mb-2">{scenario.name}</h4>
-    <p className="text-sm text-gray-700 whitespace-pre-line mb-3">{scenario.description}</p>
-    <div className="flex items-center">
-      <span className="w-32 text-sm font-medium">DA Impact:</span>
-      <MetricBar 
-        values={[scenario.impact]} 
-        maxValue={100} 
-        colors={['#dc2626']}
-        onHover={() => {}}
-        onLeave={() => {}}
-      />
-      <span className="ml-2 text-sm">{scenario.impact}%</span>
-    </div>
-  </div>
-);
-
 const DonutChart = ({ data, colors, size = 100, onHover, onLeave }) => {
   const total = data.reduce((sum, value) => sum + value, 0);
   let startAngle = 0;
@@ -254,7 +237,7 @@ const DonutChart = ({ data, colors, size = 100, onHover, onLeave }) => {
   );
 };
 
-const EnhancedSectionPanel = ({ section, data, isActive, onClick, viewMode, totalDA, maxTotalDA }) => {
+const EnhancedSectionPanel = ({ section, data, isActive, onClick, viewMode, totalDA, maxOngoing, maxVolatility }) => {
   const [hoveredSegment, setHoveredSegment] = React.useState(null);
   const chartData = data.metrics.map(metric => metric[viewMode]);
   const chartColors = ['#D1D5DB', '#9CA3AF', '#6B7280', '#4B5563', '#374151'];
@@ -267,7 +250,9 @@ const EnhancedSectionPanel = ({ section, data, isActive, onClick, viewMode, tota
     setHoveredSegment(null);
   };
 
-  const overlayHeight = `${(totalDA / maxTotalDA) * 100}%`;
+  const overlayHeight = viewMode === 'ongoing' 
+    ? `${(totalDA / maxOngoing) * 100}%`
+    : `${(totalDA / maxVolatility) * 100}%`;
   const overlayColor = viewMode === 'ongoing' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(239, 68, 68, 0.1)';
 
   return (
@@ -306,6 +291,70 @@ const EnhancedSectionPanel = ({ section, data, isActive, onClick, viewMode, tota
         </div>
         <p className="text-sm text-center">Total {viewMode === 'ongoing' ? 'Ongoing' : 'Volatility'} DA: {totalDA}</p>
       </div>
+    </div>
+  );
+};
+
+const ScenarioImpactChart = ({ scenarios }) => {
+  const maxScore = Math.max(...scenarios.map(s => s.relativeDAScore));
+  const chartHeight = 300; // pixels
+  const barWidth = 40; // pixels
+  const spacing = 60; // pixels between bars
+
+  return (
+    <div className="mb-12 mt-8 overflow-x-auto">
+      <h5 className="text-lg font-semibold mb-6">Relative DA Impact Scores</h5>
+      <div className="relative" style={{ height: `${chartHeight + 100}px`, minWidth: `${scenarios.length * (barWidth + spacing)}px` }}>
+        {scenarios.map((scenario, index) => (
+          <div 
+            key={index} 
+            className="absolute flex flex-col items-center"
+            style={{ 
+              left: `${index * (barWidth + spacing)}px`,
+              bottom: '0',
+              width: `${barWidth + spacing}px`
+            }}
+          >
+            <div 
+              className="bg-blue-500 rounded-t transition-all duration-300 ease-in-out"
+              style={{ 
+                height: `${(scenario.relativeDAScore / maxScore) * chartHeight}px`,
+                width: `${barWidth}px`
+              }}
+            ></div>
+            <span className="mt-2 text-sm font-semibold">{scenario.relativeDAScore}</span>
+            <div className="h-20 flex items-center">
+              <span className="text-xs text-center" style={{ maxWidth: `${barWidth + spacing}px` }}>
+                {scenario.title}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Scenario = ({ scenario }) => {
+  const barWidth = scenario.relativeDAScore * 10; // 10% per score point
+
+  return (
+    <div className="mb-6 p-4 bg-gray-100 rounded-lg">
+      <h4 className="font-semibold mb-2">{scenario.title}</h4>
+      <p className="text-sm font-semibold mb-1">
+        <span className="text-black">DA Scaling:</span> {scenario.daScaling}
+      </p>
+      <div className="flex items-center mb-2">
+        <span className="text-sm font-semibold mr-2">Relative DA Score:</span>
+        <div className="bg-blue-500 h-4 rounded" style={{ width: `${barWidth}%` }}></div>
+        <span className="ml-2 text-sm font-semibold">{scenario.relativeDAScore}</span>
+      </div>
+      <p className="text-sm text-gray-700 mb-2">
+        <span className="font-semibold text-black">Analysis:</span> {scenario.analysis}
+      </p>
+      <p className="text-sm text-red-600">
+        <span className="font-semibold text-black">Implications:</span> {scenario.implications}
+      </p>
     </div>
   );
 };
@@ -353,8 +402,9 @@ const DeFiDashboard = () => {
     };
     return acc;
   }, {});
-
-  const maxTotal = Math.max(...Object.values(sectionTotals).flatMap(total => [total.ongoing, total.volatility]));
+  
+  const maxOngoing = Math.max(...Object.values(sectionTotals).map(total => total.ongoing));
+  const maxVolatility = Math.max(...Object.values(sectionTotals).map(total => total.volatility));
 
   return (
     <div className="p-6 max-w-6xl mx-auto bg-white shadow-lg rounded-lg">
@@ -404,7 +454,8 @@ const DeFiDashboard = () => {
             onClick={() => setActiveSection(key)}
             viewMode={viewMode}
             totalDA={sectionTotals[key][viewMode]}
-            maxTotalDA={maxTotal}
+            maxOngoing={maxOngoing}
+            maxVolatility={maxVolatility}
           />
         ))}
       </div>
@@ -420,7 +471,10 @@ const DeFiDashboard = () => {
       </div>
 
       <h4 className="text-xl font-semibold mb-6 mt-12 text-gray-700">High-Impact Scenarios</h4>
-      <div className="space-y-6">
+      <div className="mt-8"> {/* Add this wrapper div with top margin */}
+        <ScenarioImpactChart scenarios={sectionData.scenarios} />
+      </div>
+      <div className="space-y-6 mt-6">
         {sectionData.scenarios.map((scenario, index) => (
           <Scenario key={index} scenario={scenario} />
         ))}

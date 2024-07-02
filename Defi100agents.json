@@ -5,116 +5,223 @@
     "metrics": [
       {
         "name": "Order Book Management",
-        "ongoing": 75,
-        "volatility": 230,
+        "ongoing": 7.75,
+        "volatility": 95,
         "subMetrics": [
           {
             "name": "Order Placement Rate",
-            "ongoing": 30,
-            "volatility": 90,
-            "ongoingExample": "A popular trading pair sees 1000 new limit orders per minute, requiring frequent order book updates.",
-            "volatilityExample": "During a market crash, order placement rate spikes to 10,000 per minute, causing a surge in DA demand.",
-            "assumptions": "Assumes 100 active agents trading across multiple pairs, with varying levels of trading frequency and sophistication."
+            "ongoing": 2.5,
+            "volatility": 12.5,
+            "ongoingExample": "Across popular trading pairs the market sees 10 new limit orders per second, requiring frequent order book updates.\nEach order placement is 250 bytes, accounting for metadata, signatures, and potential cross-chain information.",
+            "volatilityExample": "During a market crash, order placement rate spikes to 50 per second, causing a surge in DA demand.",
+            "assumptions": "Measures the rate at which new orders are placed on the order book.\nAssumes 100 active agents trading across multiple pairs, with varying levels of trading frequency and sophistication.\nScales superlinearly with the number of agents due to increased market complexity and cross-chain interactions."
           },
           {
             "name": "Order Cancellation Rate",
-            "ongoing": 25,
-            "volatility": 80,
-            "ongoingExample": "Traders cancel about 500 orders per minute as part of regular strategy adjustments.",
-            "volatilityExample": "A false rumor causes panic, leading to 5,000 order cancellations per minute.",
-            "assumptions": "Assumes a mix of manual traders and basic trading bots among the 100 agents, with moderate order adjustment frequencies."
+            "ongoing": 1,
+            "volatility": 50,
+            "ongoingExample": "Trading agents cancel about 1 orders per second as part of regular strategy adjustments.\nEach order cancellation is 200 bytes.",
+            "volatilityExample": "A false rumor causes panic, leading to 50 order cancellations per second.",
+            "assumptions": "Measures the rate at which orders are canceled.\nAssumes a mix of manual traders and basic trading bots among the 100 agents, with moderate order adjustment frequencies.\nScales linearly with the number of agents, but at a slightly lower rate for a large number of agents."
           },
           {
             "name": "Order Book Depth",
-            "ongoing": 20,
-            "volatility": 60,
-            "ongoingExample": "The order book maintains 1000 price levels on each side, requiring constant updates.",
-            "volatilityExample": "Market makers add liquidity, expanding the order book to 5000 levels per side.",
-            "assumptions": "Assumes moderate liquidity across popular trading pairs, with a few dedicated market makers among the 100 agents."
+            "ongoing": 1.5,
+            "volatility": 15,
+            "ongoingExample": "The order book maintains 2 updates per second, requiring constant updates.\nEach order book update is 750 bytes, accounting for more complex order book structures in a multi-chain environment.",
+            "volatilityExample": "Market makers add liquidity, expanding the order book to 20 updates per second.",
+            "assumptions": "Represents the number of orders at various price levels in the order book.\nAssumes moderate liquidity across popular trading pairs, with a few dedicated market makers among the 100 agents.\nScales exponentially due to increasing complexity and interactions across multiple chains."
+          },
+          {
+            "name": "Order Modification Rate",
+            "ongoing": 0.75,
+            "volatility": 7.5,
+            "ongoingExample": "Traders modify about 3 orders per second to adjust their positions.\nEach order modification is 250 bytes, accounting for additional metadata and cross-chain information.",
+            "volatilityExample": "During high volatility, order modifications spike to 30 per second.",
+            "assumptions": "Measures the rate at which existing orders are modified (e.g., changing price or quantity).\nAssumes occasional order modifications by a subset of the 100 agents.\nScales linearly with the number of agents, with a slight increase in rate for a large number of agents."
+          },
+          {
+            "name": "Order Matching Rate",
+            "ongoing": 2,
+            "volatility": 10,
+            "ongoingExample": "The exchange matches 5 orders per second during normal trading.\nEach order match is 400 bytes, accounting for more complex matching scenarios in a multi-chain environment.",
+            "volatilityExample": "A sudden market movement leads to 25 order matches per second.",
+            "assumptions": "Measures the frequency at which orders are matched and removed from the order book.\nAssumes regular order matching activity suitable for 100 agents.\nScales exponentially due to higher frequency of matches as the number of agents increases."
           }
         ],
         "explanation": "Order book management DA increases due to:\n• Higher frequency of order placements and cancellations\n• Deeper order books requiring more data storage and updates\n• Need for real-time synchronization across all nodes\n• Increased complexity in maintaining order book integrity during high volatility"
       },
       {
         "name": "Trade Execution",
-        "ongoing": 60,
-        "volatility": 270,
+        "ongoing": 3.75,
+        "volatility": 80,
         "subMetrics": [
           {
             "name": "Transaction Rate",
-            "ongoing": 25,
-            "volatility": 120,
-            "ongoingExample": "The exchange processes 100 trades per second during normal market conditions.",
-            "volatilityExample": "A major news event causes trading volume to spike to 1000 trades per second.",
-            "assumptions": "Assumes standard transaction processing capabilities suitable for 100 agents, with occasional spikes in trading activity."
-          },
-          {
-            "name": "Trade Size",
-            "ongoing": 20,
-            "volatility": 90,
-            "ongoingExample": "Average trade size is 1 ETH, requiring standard transaction data.",
-            "volatilityExample": "Large investors enter the market, increasing average trade size to 100 ETH.",
-            "assumptions": "Assumes mostly retail-sized trades among the 100 agents, with occasional larger trades from a few institutional participants."
+            "ongoing": 1.75,
+            "volatility": 35,
+            "ongoingExample": "The exchange processes 5 trades per second during normal market conditions.\nEach trade transaction is 350 bytes, accounting for additional metadata, signatures, and potential cross-chain information.",
+            "volatilityExample": "A major news event causes trading volume to spike to 100 trades per second.",
+            "assumptions": "Measures the number of trades executed per second.\nAssumes standard transaction processing capabilities suitable for 100 agents, with occasional spikes in trading activity.\nScales exponentially with the number of agents, but with a slightly reduced rate for a large number of agents."
           },
           {
             "name": "Slippage Monitoring",
-            "ongoing": 15,
-            "volatility": 60,
-            "ongoingExample": "Slippage is calculated every 5 seconds for active trading pairs.",
-            "volatilityExample": "High volatility requires slippage calculations every 0.5 seconds to protect traders.",
-            "assumptions": "Assumes basic slippage protection mechanisms suitable for the trading volume generated by 100 agents."
+            "ongoing": 0.25,
+            "volatility": 10,
+            "ongoingExample": "Slippage is calculated for 5 trades per second for active trading pairs.\nEach slippage data point is 500 bytes, accounting for detailed slippage information across multiple chains.",
+            "volatilityExample": "High volatility requires slippage calculations for 200 trades per second to protect traders.",
+            "assumptions": "Measures the difference between the expected and actual trade prices.\nAssumes basic slippage protection mechanisms suitable for the trading volume generated by 100 agents.\nScales superlinearly with the number of trades, reflecting increased market complexity without full exponential growth."
+          },
+          {
+            "name": "Trade Confirmation Time",
+            "ongoing": 0.5,
+            "volatility": 10,
+            "ongoingExample": "5 trade confirmations are processed per second under normal conditions.\nEach trade confirmation is 100 bytes, accounting for additional confirmation details in a multi-chain environment.",
+            "volatilityExample": "During peak trading, confirmation rate increases to 100 per second due to network congestion.",
+            "assumptions": "Measures the time it takes for a trade to be confirmed.\nAssumes regular confirmation processes suitable for 100 agents.\nScales superlinearly with the number of trades, reflecting increased complexity without full exponential growth."
+          },
+          {
+            "name": "Trade Settlement Rate",
+            "ongoing": 1.25,
+            "volatility": 25,
+            "ongoingExample": "5 trades are settled per second in regular conditions.\nEach trade settlement is 250 bytes, accounting for more complex settlement processes in a multi-chain environment.",
+            "volatilityExample": "High trading volume requires settlement of 100 trades per second to prevent backlogs.",
+            "assumptions": "Measures the rate at which trades are settled and final.\nAssumes periodic settlement processes suitable for the trading volume of 100 agents.\nScales exponentially with the number of trades, but with a slightly reduced rate for a large number of agents."
           }
         ],
         "explanation": "Trade execution DA spikes due to:\n• Dramatic increase in transaction volume during volatile periods\n• Larger trade sizes requiring more data to process and verify\n• More frequent and complex slippage calculations\n• Need for faster block creation and propagation to handle increased load"
       },
       {
         "name": "Liquidity Pool Updates",
-        "ongoing": 50,
-        "volatility": 200,
+        "ongoing": 1.35,
+        "volatility": 84,
         "subMetrics": [
           {
             "name": "Pool Rebalancing",
-            "ongoing": 20,
-            "volatility": 80,
-            "ongoingExample": "Liquidity pools rebalance every 10 minutes to maintain target ratios.",
-            "volatilityExample": "Rapid price changes force pool rebalancing every 30 seconds.",
-            "assumptions": "Assumes moderate-sized liquidity pools suitable for the trading volume from 100 agents, with periodic rebalancing to maintain ratios."
+            "ongoing": 0.15,
+            "volatility": 15,
+            "ongoingExample": "Liquidity pools rebalance 0.25 time per second to maintain target ratios.\nEach pool rebalancing action is 600 bytes, accounting for more complex rebalancing data in a multi-chain environment.",
+            "volatilityExample": "Rapid price changes force pool rebalancing 25 times per second.",
+            "assumptions": "Measures the frequency of rebalancing the liquidity pool.\nAssumes moderate-sized liquidity pools suitable for the trading volume from 100 agents, with periodic rebalancing to maintain ratios.\nScales superlinearly with the number of agents due to increased complexity and frequency of rebalancing in a multi-chain environment."
           },
           {
             "name": "Liquidity Provider Actions",
-            "ongoing": 15,
-            "volatility": 70,
-            "ongoingExample": "50 liquidity providers adjust their positions hourly.",
-            "volatilityExample": "A yield farming opportunity causes 500 LPs to adjust positions in minutes.",
-            "assumptions": "Assumes a small portion of the 100 agents are active liquidity providers, with occasional position adjustments based on market conditions."
+            "ongoing": 0.4,
+            "volatility": 4,
+            "ongoingExample": "2 liquidity providers adjust their positions per second.\nEach liquidity provider action (add/remove liquidity) is 200 bytes.",
+            "volatilityExample": "A yield farming opportunity causes 20 LP adjustments per second.",
+            "assumptions": "Tracks actions by liquidity providers such as adding or removing liquidity.\nAssumes a small portion of the 100 agents are active liquidity providers, with occasional position adjustments based on market conditions.\nScales superlinearly with the number of agents due to increased complexity and frequency of liquidity provision across multiple chains."
           },
           {
             "name": "Automated Market Making",
-            "ongoing": 15,
-            "volatility": 50,
-            "ongoingExample": "AMM curves are updated every 100 blocks under normal conditions.",
-            "volatilityExample": "Extreme volatility requires AMM curve updates every 10 blocks.",
-            "assumptions": "Assumes basic AMM algorithms suitable for handling the trading volume and market dynamics created by 100 agents."
+            "ongoing": 0.35,
+            "volatility": 35,
+            "ongoingExample": "AMM curves are updated 1 time per second under normal conditions.\nEach automated market making action is 350 bytes, accounting for more complex AMM operations in a multi-chain environment.",
+            "volatilityExample": "Extreme volatility requires 100 AMM curve updates per second.",
+            "assumptions": "Measures the activity of the automated market maker algorithm.\nAssumes basic AMM algorithms suitable for handling the trading volume and market dynamics created by 100 agents.\nScales exponentially with the number of agents due to the increased complexity of balancing liquidity across multiple chains and pools."
+          },
+          {
+            "name": "Fee Calculation and Distribution",
+            "ongoing": 0.3,
+            "volatility": 15,
+            "ongoingExample": "Fees are calculated and distributed 1 time per second.\nEach fee calculation and distribution action is 300 bytes, accounting for more complex fee structures in a multi-chain environment.",
+            "volatilityExample": "High trading volume requires 50 fee calculations and distributions per second.",
+            "assumptions": "Measures the frequency and size of fee calculations and distributions to liquidity providers.\nAssumes basic fee calculation and distribution mechanisms suitable for 100 agents.\nScales exponentially with the number of agents due to the increased complexity of fee structures and distribution across multiple chains."
+          },
+          {
+            "name": "Price Updates",
+            "ongoing": 0.3,
+            "volatility": 15,
+            "ongoingExample": "Asset prices are updated 2 times per second.\nEach price update is 150 bytes.",
+            "volatilityExample": "Rapid market movements require 100 price updates per second.",
+            "assumptions": "Measures the frequency and size of updates to pool prices based on market conditions.\nAssumes regular price update mechanisms suitable for 100 agents.\nScales exponentially with the number of agents due to the increased frequency and complexity of price updates required in a multi-chain environment."
           }
         ],
         "explanation": "Liquidity pool updates require more DA due to:\n• Frequent rebalancing of pools to maintain desired ratios\n• Increased liquidity provider activities (adding/removing liquidity)\n• More complex and frequent automated market making calculations\n• Need for real-time updates of pool states across the network"
+      },
+      {
+        "name": "Price Oracle Management",
+        "ongoing": 4.35,
+        "volatility": 88,
+        "subMetrics": [
+          {
+            "name": "Oracle Data Submissions",
+            "ongoing": 2,
+            "volatility": 40,
+            "ongoingExample": "Price oracles submit 10 updates per second for major trading pairs.\nEach oracle data submission is 200 bytes, including asset identifier, price, timestamp, and provider signature.",
+            "volatilityExample": "During high volatility, oracles submit 200 updates per second.",
+            "assumptions": "Measures the frequency and size of price data submissions from oracle providers.\nAssumes regular oracle data submissions suitable for 100 agents.\nScales superlinearly due to increased complexity and the need for frequent updates as more agents participate, with optimizations at scale."
+          },
+          {
+            "name": "Oracle Provider Reputation Updates",
+            "ongoing": 0.3,
+            "volatility": 3,
+            "ongoingExample": "Oracle provider reputations are updated 1 time per second based on accuracy.\nEach reputation update is 300 bytes, including provider identifier, new reputation score, and supporting data.",
+            "volatilityExample": "A potential oracle attack leads to 10 reputation updates per second.",
+            "assumptions": "Measures the frequency of updates to the reputation scores of oracle providers.\nAssumes basic reputation management for oracle providers suitable for 100 agents.\nScales superlinearly as the number of providers increases, but with optimizations at scale."
+          },
+          {
+            "name": "Consensus Mechanism Updates",
+            "ongoing": 0.05,
+            "volatility": 5,
+            "ongoingExample": "The oracle consensus mechanism is updated 0.1 times per second.\nEach consensus mechanism update is 500 bytes, including new parameters, justification, and activation timestamp.",
+            "volatilityExample": "A critical vulnerability requires 10 consensus updates per second.",
+            "assumptions": "Measures the frequency of updates to the consensus mechanism for aggregating oracle data.\nAssumes infrequent consensus mechanism updates suitable for 100 agents.\nScales logarithmically as the system becomes more stable with increased scale."
+          },
+          {
+            "name": "Cross-Chain Price Synchronization",
+            "ongoing": 2,
+            "volatility": 40,
+            "ongoingExample": "Cross-chain price data is synchronized 5 times per second.\nEach synchronization event is 400 bytes, including price data for multiple assets, chain identifiers, and synchronization metadata.",
+            "volatilityExample": "High cross-chain trading activity requires 100 synchronizations per second.",
+            "assumptions": "Measures the frequency of synchronization events to ensure price consistency across chains.\nAssumes regular cross-chain price synchronization suitable for 100 agents.\nScales superlinearly as the number of interconnected chains increases, but with optimizations at scale."
+          }
+        ],
+        "explanation": "Price oracle management DA requirements increase due to:\n• More frequent and precise oracle price updates\n• Increased complexity in managing oracle provider reputations\n• Need for consistent consensus across multiple chains\n• Challenges in maintaining price consistency across interconnected networks"
       }
     ],
     "scenarios": [
       {
-        "name": "Flash Crash",
-        "description": "During a flash crash, DA requirements spike dramatically due to:\n• Sudden influx of sell orders and cancellations\n• Rapid price changes requiring frequent order book updates\n• Potential cascading liquidations in leveraged positions\n• Need for quick dissemination of market data to prevent further panic",
-        "impact": 95
+        "title": "Flash Loan Attacks or Large-Scale Arbitrage Operations",
+        "daScaling": "Exponential but short-lived",
+        "relativeDAScore": 9,
+        "analysis": "Rapid, simultaneous trades by millions of AI agents cause significant state changes across liquidity pools.",
+        "implications": "Immediate burst capacity and fast state propagation are crucial to mitigate systemic risks and maintain market stability."
       },
       {
-        "name": "New Token Listing",
-        "description": "A popular new token listing increases DA demand due to:\n• Surge in new user registrations and KYC verifications\n• High volume of initial orders populating the order book\n• Rapid liquidity pool creation and initial balancing\n• Increased network traffic for price discovery and initial trading",
-        "impact": 80
+        "title": "Launch of Popular New Token Pairs",
+        "daScaling": "High initial spike, tapering off",
+        "relativeDAScore": 8,
+        "analysis": "A surge in account creations, order placements, and liquidity as millions of agents engage with new tokens.",
+        "implications": "Scalable onboarding and efficient order book management are essential to handle the surge and prevent network congestion."
       },
       {
-        "name": "High-Frequency Trading Event",
-        "description": "HFT events cause DA spikes due to:\n• Extremely high order placement and cancellation rates\n• Need for nanosecond-level timestamp precision\n• Increased demand for ultra-low-latency data propagation\n• Complex algorithmic trading strategies requiring more computational resources",
-        "impact": 90
+        "title": "Market-Wide High Trading Volumes",
+        "daScaling": "Potentially exponential",
+        "relativeDAScore": 10,
+        "analysis": "Increased trading across multiple pairs as AI agents optimize trades, leading to a massive network load.",
+        "implications": "System-wide scalability and efficient state management are vital for maintaining synchronization and seamless trading experiences."
+      },
+      {
+        "title": "Sudden Market Crashes Triggering Mass Order Cancellations",
+        "daScaling": "Exponential",
+        "relativeDAScore": 10,
+        "analysis": "Panic-driven cancellations by agents responding to market downturns, leading to volatile order books.",
+        "implications": "High DA capacity is necessary to process cancellations swiftly and prevent cascading failures in market operations."
+      },
+      {
+        "title": "Coordinated AI-Driven Trading Strategies",
+        "daScaling": "High, sustained",
+        "relativeDAScore": 9,
+        "analysis": "Coordinated actions by AI agents executing complex trading algorithms increase the frequency and complexity of transactions.",
+        "implications": "Robust DA systems are required to support rapid transaction processing and ensure market efficiency."
+      },
+      {
+        "title": "New Protocol Upgrades or Forks",
+        "daScaling": "High, short-term",
+        "relativeDAScore": 8,
+        "analysis": "Protocol changes lead to increased activity as agents adapt to new features or resolve inconsistencies.",
+        "implications": "Enhanced DA is needed to ensure smooth transitions and prevent data lags during upgrades."
       }
     ]
   },
@@ -124,96 +231,104 @@
     "metrics": [
       {
         "name": "Interest Rate Management",
-        "ongoing": 60,
-        "volatility": 180,
+        "ongoing": 0.95,
+        "volatility": 36,
         "subMetrics": [
           {
             "name": "Rate Calculation Frequency",
-            "ongoing": 25,
-            "volatility": 75,
-            "ongoingExample": "Interest rates are recalculated every 10 minutes based on utilization rates.",
-            "volatilityExample": "During high volatility, rates are updated every 30 seconds to reflect rapid market changes.",
-            "assumptions": "Assumes a lending pool with moderate activity from 100 agents, requiring periodic rate adjustments."
+            "ongoing": 0.25,
+            "volatility": 5,
+            "ongoingExample": "Interest rates are recalculated 1 time per second based on utilization rates.\nEach rate calculation update is 250 bytes, accounting for more complex calculations involving multiple assets and chains.",
+            "volatilityExample": "During high volatility, rates are updated 20 times per second to reflect rapid market changes.",
+            "assumptions": "Measures how often interest rates are recalculated.\nAssumes a lending pool with moderate activity from 100 agents, requiring periodic rate adjustments.\nScales superlinearly with the number of agents due to increased complexity and frequency of calculations in a multi-asset, multi-chain environment."
           },
           {
             "name": "Market Data Integration",
-            "ongoing": 20,
-            "volatility": 60,
-            "ongoingExample": "External price feeds are queried hourly to adjust interest rates.",
-            "volatilityExample": "Price feeds are queried every minute during market turbulence.",
-            "assumptions": "Assumes integration with a few key price oracles, suitable for the scale of 100 agents."
+            "ongoing": 0.6,
+            "volatility": 30,
+            "ongoingExample": "External price feeds are queried 1 time per second to adjust interest rates.\nEach market data update is 600 bytes, accounting for more comprehensive market data across multiple assets and chains.",
+            "volatilityExample": "Price feeds are queried 50 times per second during market turbulence.",
+            "assumptions": "Measures the frequency and size of market data updates integrated into the system.\nAssumes integration with a few key price oracles, suitable for the scale of 100 agents.\nScales superlinearly with the number of agents due to increased complexity and volume of market data across multiple assets and chains."
           },
           {
             "name": "User Notification System",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "Users receive daily updates on their loan interest rates.",
-            "volatilityExample": "Real-time notifications are sent for every rate change during volatile periods.",
-            "assumptions": "Assumes a basic notification system capable of handling updates for 100 users."
+            "ongoing": 0.1,
+            "volatility": 1,
+            "ongoingExample": "Users receive 1 update per second on their loan interest rates.\nEach user notification remains at 100 bytes, as the basic structure of notifications doesn't change significantly.",
+            "volatilityExample": "Real-time notifications are sent 10 times per second for every rate change during volatile periods.",
+            "assumptions": "Measures the frequency and size of notifications sent to users regarding interest rate changes.\nAssumes a basic notification system capable of handling updates for 100 users.\nScales superlinearly with the number of agents due to the increased number of users who need to be notified, but with optimizations for large-scale operations."
           }
         ],
         "explanation": "Interest rate management DA increases due to:\n• More frequent rate recalculations in volatile markets\n• Integration of real-time market data from multiple sources\n• Increased user notifications about rate changes\n• Need for rapid propagation of new rates across the network"
       },
       {
         "name": "Collateral Management",
-        "ongoing": 70,
-        "volatility": 210,
+        "ongoing": 3.45,
+        "volatility": 23.75,
         "subMetrics": [
           {
             "name": "Collateral Value Updates",
-            "ongoing": 30,
-            "volatility": 90,
-            "ongoingExample": "Collateral values are updated every 5 minutes under normal conditions.",
-            "volatilityExample": "During market crashes, collateral values are updated every 10 seconds.",
-            "assumptions": "Assumes a moderate range of collateral types used by 100 agents, requiring regular value updates."
+            "ongoing": 0.85,
+            "volatility": 8.5,
+            "ongoingExample": "Collateral values are updated 1 time per second under normal conditions.\nEach collateral value update is 850 bytes, accounting for more complex updates involving multiple assets and chains.",
+            "volatilityExample": "During market crashes, collateral values are updated 10 times per second.",
+            "assumptions": "Measures the frequency of updates to collateral values.\nAssumes a moderate range of collateral types used by 100 agents, requiring regular value updates.\nScales superlinearly with the number of agents due to increased complexity and frequency of updates in a multi-asset, multi-chain environment."
           },
           {
             "name": "Liquidation Monitoring",
-            "ongoing": 25,
-            "volatility": 75,
-            "ongoingExample": "Liquidation thresholds are checked every 15 minutes for all positions.",
-            "volatilityExample": "Continuous real-time monitoring of all positions near liquidation thresholds.",
-            "assumptions": "Assumes a liquidation engine capable of monitoring positions for 100 users with varying collateral ratios."
+            "ongoing": 0.45,
+            "volatility": 4.5,
+            "ongoingExample": "Liquidation thresholds are checked 1 time per second for all positions.\nEach liquidation monitoring update is 450 bytes, accounting for more comprehensive monitoring across multiple assets and chains.",
+            "volatilityExample": "Continuous real-time monitoring results in 10 checks per second of all positions near liquidation thresholds.",
+            "assumptions": "Measures the frequency of monitoring for potential liquidations.\nAssumes a liquidation engine capable of monitoring positions for 100 users with varying collateral ratios.\nScales superlinearly with the number of agents due to increased complexity and volume of monitoring across multiple assets and chains."
           },
           {
-            "name": "Collateral Swap Operations",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "Users perform collateral swaps a few times per hour.",
-            "volatilityExample": "Surge in collateral swaps as users rush to more stable assets.",
-            "assumptions": "Assumes occasional collateral swaps by a subset of the 100 users, with increased activity during market stress."
+            "name": "Collateral Withdrawal Requests",
+            "ongoing": 0.4,
+            "volatility": 2,
+            "ongoingExample": "Users perform 1 collateral withdrawal per second.\nEach withdrawal request is 400 bytes, as the basic structure of requests doesn't change significantly.",
+            "volatilityExample": "Surge in withdrawal requests results in 5 requests per second as users seek to reduce exposure during market stress.",
+            "assumptions": "Measures the frequency of requests to withdraw collateral.\nAssumes occasional collateral withdrawals by a subset of the 100 users, with increased activity during market stress.\nScales superlinearly with the number of agents due to increased complexity of cross-chain operations and enhanced security measures."
+          },
+          {
+            "name": "Collateral Health Monitoring",
+            "ongoing": 1.75,
+            "volatility": 8.75,
+            "ongoingExample": "Collateral health is monitored 5 times per second for all active positions.",
+            "volatilityExample": "During market volatility, collateral health is monitored 25 times per second.",
+            "assumptions": "Measures the continuous monitoring of the health/status of collateral beyond just value updates.\nAssumes regular health checks for collateral owned by 100 users, with capacity for more frequent updates when needed.\nEach health monitoring update is 350 bytes, accounting for more comprehensive health monitoring.\nScales superlinearly as the number of agents and the complexity of monitoring increases, but with optimizations at scale."
           }
         ],
         "explanation": "Collateral management DA spikes due to:\n• Rapid and frequent updates of collateral asset prices\n• Increased liquidation events requiring immediate action\n• Higher frequency of collateral swaps and adjustments\n• Need for real-time risk assessment of collateralized positions"
       },
       {
         "name": "Loan Position Tracking",
-        "ongoing": 50,
-        "volatility": 150,
+        "ongoing": 2.27,
+        "volatility": 63.92,
         "subMetrics": [
           {
             "name": "Position Health Calculation",
-            "ongoing": 20,
-            "volatility": 60,
-            "ongoingExample": "Loan health is recalculated hourly for all active positions.",
-            "volatilityExample": "Health scores are updated every 5 minutes during high volatility.",
-            "assumptions": "Assumes regular health calculations for loans held by 100 users, with varying loan sizes and collateral types."
+            "ongoing": 1.3,
+            "volatility": 19.5,
+            "ongoingExample": "Loan health is recalculated 1 time per second for all active positions.\nEach position health calculation is 1300 bytes, accounting for more complex calculations involving multiple assets and chains.",
+            "volatilityExample": "Health scores are updated 15 times per second during high volatility.",
+            "assumptions": "Measures the frequency of calculating the health of loan positions.\nAssumes regular health calculations for loans held by 100 users, with varying loan sizes and collateral types.\nScales superlinearly with the number of agents due to increased complexity and frequency of calculations in a multi-asset, multi-chain environment."
           },
           {
             "name": "Loan Origination and Closure",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "New loans and repayments are processed within 1 minute.",
-            "volatilityExample": "Surge in new loans and emergency closures during market events.",
-            "assumptions": "Assumes moderate loan origination and closure activity among 100 users, with occasional spikes."
+            "ongoing": 0.17,
+            "volatility": 4.42,
+            "ongoingExample": "New loans and repayments are processed at a rate of 0.1 per second.\nEach loan origination or closure operation is 1700 bytes, accounting for more comprehensive processes across multiple assets and chains.",
+            "volatilityExample": "Surge in new loans and emergency closures during market events leads to 20 processes per second.",
+            "assumptions": "Measures the frequency of loan originations and closures.\nAssumes moderate loan origination and closure activity among 100 users, with occasional spikes.\nScales superlinearly with the number of agents due to increased complexity of cross-chain operations and enhanced security measures."
           },
           {
             "name": "Historical Data Management",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "Loan history is compressed and archived daily.",
-            "volatilityExample": "Increased granularity of historical data during volatile periods.",
-            "assumptions": "Assumes basic historical data management for 100 users, with capacity for increased detail during significant market events."
+            "ongoing": 0.8,
+            "volatility": 40,
+            "ongoingExample": "Loan history is compressed and archived 0.1 time per second.\nEach historical data management operation is 8000 bytes, accounting for more comprehensive data management across multiple assets and chains.",
+            "volatilityExample": "Increased granularity of historical data during volatile periods requires 5 compressions and archives per second.",
+            "assumptions": "Measures the frequency of managing and updating historical loan data.\nAssumes basic historical data management for 100 users, with capacity for increased detail during significant market events.\nScales logarithmically with the number of agents due to optimizations and compression techniques in data management systems at scale."
           }
         ],
         "explanation": "Loan position tracking DA requirements increase due to:\n• More frequent recalculation of loan health metrics\n• Increased loan origination and closure activities during market events\n• Need for more detailed historical data for risk assessment\n• Real-time updates of user dashboards and risk management systems"
@@ -221,19 +336,39 @@
     ],
     "scenarios": [
       {
-        "name": "Market-Wide Collateral Price Drop",
-        "description": "During a sudden drop in collateral asset prices, DA requirements spike due to:\n• Continuous revaluation of all collateralized positions\n• Surge in liquidation events requiring immediate processing\n• Mass user actions to add collateral or close positions\n• Increased demand for real-time market data and price feeds",
-        "impact": 95
+        "title": "Rapid Asset Price Changes Across Chains",
+        "daScaling": "Exponential, affected by the number of loans and chains",
+        "relativeDAScore": 10,
+        "analysis": "Swift price changes trigger mass recalculations of collateral values, impacting liquidation processes.",
+        "implications": "Ultra-fast cross-chain communication and state synchronization are crucial to prevent liquidation delays and protect system integrity."
       },
       {
-        "name": "Interest Rate Policy Change",
-        "description": "A significant change in interest rate policy increases DA demand due to:\n• Recalculation of interest rates for all active loans\n• Mass user notifications about the policy change\n• Surge in user actions (new loans, repayments, or refinancing)\n• Increased monitoring of market reaction and system stability",
-        "impact": 80
+        "title": "Large-Scale Borrowing/Repayment by AI Agents",
+        "daScaling": "Exponential, influenced by agent activities and strategies",
+        "relativeDAScore": 9,
+        "analysis": "Massive transactions by AI agents require rapid DA to ensure accurate loan state updates and prevent market distortions.",
+        "implications": "Real-time state management is essential to maintain system stability and prevent arbitrage failures and cascading effects."
       },
       {
-        "name": "Large-Scale Liquidation Event",
-        "description": "A cascade of liquidations causes DA spikes due to:\n• Simultaneous processing of multiple liquidation transactions\n• Rapid updates of affected user positions and overall protocol state\n• Increased activity in collateral asset markets\n• Heightened monitoring of protocol health and liquidity",
-        "impact": 90
+        "title": "Dynamic Interest Rates with Credit Scores",
+        "daScaling": "Linear growth with periodic spikes",
+        "relativeDAScore": 8,
+        "analysis": "Interest rate fluctuations based on credit scores require continuous data updates and risk assessments.",
+        "implications": "Privacy-preserving DA solutions are necessary to handle sensitive credit data while ensuring consistent risk management and user trust."
+      },
+      {
+        "title": "Sudden Liquidity Withdrawals",
+        "daScaling": "High, short-term",
+        "relativeDAScore": 9,
+        "analysis": "Mass withdrawals by agents responding to market volatility can strain liquidity pools.",
+        "implications": "Immediate DA is required to update liquidity states and maintain operational efficiency, preventing potential liquidity crises."
+      },
+      {
+        "title": "Collateral Value Manipulation",
+        "daScaling": "Moderate, sustained",
+        "relativeDAScore": 7,
+        "analysis": "Manipulative activities affecting collateral values require continuous monitoring and rapid DA.",
+        "implications": "Enhanced DA systems are crucial for real-time detection and response, ensuring the integrity of lending protocols."
       }
     ]
   },
@@ -243,116 +378,120 @@
     "metrics": [
       {
         "name": "Collateral Ratio Management",
-        "ongoing": 80,
-        "volatility": 240,
+        "ongoing": 2.7,
+        "volatility": 64.5,
         "subMetrics": [
           {
             "name": "Collateral Price Oracles",
-            "ongoing": 35,
-            "volatility": 105,
-            "ongoingExample": "Collateral prices are updated every 5 minutes from multiple oracles.",
-            "volatilityExample": "Oracle updates occur every 30 seconds during high volatility.",
-            "assumptions": "Assumes integration with a few reliable price oracles, suitable for managing CDPs of 100 users."
+            "ongoing": 0.6,
+            "volatility": 30,
+            "ongoingExample": "Collateral prices are updated 2 times per second from multiple oracles.\nEach price update is 300 bytes, accounting for more comprehensive price data across multiple assets and chains.",
+            "volatilityExample": "Oracle updates occur 100 times per second during high volatility.",
+            "assumptions": "Measures the frequency and size of price updates from oracles.\nAssumes integration with a few reliable price oracles, suitable for managing CDPs of 100 users.\nScales superlinearly due to increased complexity and the need for frequent updates as more agents participate, with optimizations at scale."
           },
           {
             "name": "CDP Health Monitoring",
-            "ongoing": 30,
-            "volatility": 90,
-            "ongoingExample": "CDP health is recalculated every 10 minutes for all positions.",
-            "volatilityExample": "Continuous real-time monitoring of all CDPs during market turbulence.",
-            "assumptions": "Assumes regular health checks for CDPs owned by 100 users, with capacity for more frequent updates when needed."
+            "ongoing": 1.5,
+            "volatility": 15,
+            "ongoingExample": "CDP health is recalculated 5 times per second for all positions.\nEach health monitoring update is 300 bytes.",
+            "volatilityExample": "Continuous real-time monitoring results in 50 calculations per second of all CDPs during market turbulence.",
+            "assumptions": "Measures the frequency of monitoring the health/status of CDPs.\nAssumes regular health checks for CDPs owned by 100 users, with capacity for more frequent updates when needed.\nScales superlinearly due to increased interactions and monitoring complexity with a larger number of agents, but with optimizations at scale."
           },
           {
             "name": "Liquidation Engine",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "Liquidation engine checks for undercollateralized CDPs every 15 minutes.",
-            "volatilityExample": "Liquidation engine runs continuously, processing multiple liquidations simultaneously.",
-            "assumptions": "Assumes a basic liquidation engine capable of managing CDPs for 100 users, with some parallel processing capability."
+            "ongoing": 0.45,
+            "volatility": 4.5,
+            "ongoingExample": "Liquidation engine checks for undercollateralized CDPs 1 time per second.\nEach liquidation action is 450 bytes, accounting for more complex liquidation processes in a multi-asset, multi-chain environment.",
+            "volatilityExample": "Liquidation engine runs continuously, processing 10 checks per second.",
+            "assumptions": "Measures the frequency of liquidation actions when CDPs fall below the required collateral ratio.\nAssumes a basic liquidation engine capable of managing CDPs for 100 users, with some parallel processing capability.\nScales exponentially as more CDPs fall below the required collateral ratio, triggering liquidations, but with slight optimizations at scale."
+          },
+          {
+            "name": "Collateral Ratio Adjustments",
+            "ongoing": 0.15,
+            "volatility": 15,
+            "ongoingExample": "Collateral ratios are adjusted 0.5 times per second based on market conditions.\nEach adjustment remains at 300 bytes.",
+            "volatilityExample": "Rapid market changes require 50 collateral ratio adjustments per second.",
+            "assumptions": "Measures the frequency of manual or automatic adjustments to collateral ratios.\nAssumes occasional collateral ratio adjustments for CDPs owned by 100 users.\nScales superlinearly as the system requires more frequent adjustments with a higher number of participants, but with optimizations at scale."
           }
         ],
         "explanation": "Collateral ratio management DA increases due to:\n• More frequent and precise oracle price updates\n• Continuous recalculation of CDP health metrics\n• Increased liquidation events requiring immediate action\n• Need for real-time global state updates across the network"
       },
       {
         "name": "Stablecoin Minting/Burning",
-        "ongoing": 70,
-        "volatility": 210,
+        "ongoing": 7.23,
+        "volatility": 141.5,
         "subMetrics": [
           {
             "name": "Minting Operations",
-            "ongoing": 30,
-            "volatility": 90,
-            "ongoingExample": "Users mint new stablecoins a few times per hour.",
-            "volatilityExample": "Surge in minting as users seek stable assets during market downturns.",
-            "assumptions": "Assumes moderate minting activity from 100 users, with capacity for increased demand during market stress."
+            "ongoing": 0.09,
+            "volatility": 9,
+            "ongoingExample": "Users mint new stablecoins 0.2 times per second.\nEach minting operation is 450 bytes, accounting for complex minting processes in a multi-asset, multi-chain environment.",
+            "volatilityExample": "Surge in minting results in 20 minting operations per second as users seek stable assets during market downturns.",
+            "assumptions": "Measures the frequency of stablecoin minting operations.\nAssumes moderate minting activity from 100 users, with capacity for increased demand during market stress.\nScales superlinearly as the number of minting operations increases with more participants, but with optimizations at scale."
           },
           {
             "name": "Burning Operations",
-            "ongoing": 25,
-            "volatility": 75,
-            "ongoingExample": "Stablecoin burning occurs periodically for CDP ratio management.",
-            "volatilityExample": "Mass burning events during deleveraging or confidence loss scenarios.",
-            "assumptions": "Assumes occasional burning operations by CDP owners among the 100 users, with potential for coordinated actions during extreme events."
+            "ongoing": 0.09,
+            "volatility": 90,
+            "ongoingExample": "Stablecoin burning occurs 0.2 times per second for CDP ratio management.\nEach burning operation is 450 bytes, accounting for more complex burning processes in a multi-asset, multi-chain environment.",
+            "volatilityExample": "Mass burning events during deleveraging or confidence loss scenarios lead to 20 burning operations per second.",
+            "assumptions": "Measures the frequency of stablecoin burning operations.\nAssumes occasional burning operations by CDP owners among the 100 users, with potential for coordinated actions during extreme events.\nScales superlinearly as the number of burning operations increases with more participants, but with optimizations at scale."
           },
           {
             "name": "Supply Management",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "Total supply is recalculated and published hourly.",
-            "volatilityExample": "Real-time supply updates during high minting/burning activity.",
-            "assumptions": "Assumes a basic supply management system capable of handling the minting and burning activity of 100 users."
+            "ongoing": 0.55,
+            "volatility": 16.5,
+            "ongoingExample": "Total supply is recalculated and published 1 time per second.\nEach supply management adjustment is 550 bytes, accounting for comprehensive supply management across multiple assets and chains.",
+            "volatilityExample": "Real-time supply updates during high minting/burning activity result in 30 recalculations per second.",
+            "assumptions": "Measures the frequency of adjustments to the overall stablecoin supply to maintain peg stability.\nAssumes a basic supply management system capable of handling the minting and burning activity of 100 users.\nScales exponentially as the frequency of supply adjustments increases with more participants to maintain stability, but with slight optimizations at scale."
+          },
+          {
+            "name": "Transaction Verification",
+            "ongoing": 6.5,
+            "volatility": 26,
+            "ongoingExample": "Transactions are verified at a rate of 5 per second under normal conditions.\nEach transaction verification remains at 1300 bytes.",
+            "volatilityExample": "High transaction volume requires verification of 20 transactions per second to prevent backlogs.",
+            "assumptions": "Measures the verification of transactions related to minting and burning operations.\nAssumes standard verification processes suitable for 100 users.\nScales superlinearly due to the need for frequent verifications as the number of transactions grows, but with optimizations at scale."
           }
         ],
         "explanation": "Stablecoin minting/burning DA spikes due to:\n• Increased user activity in creating or closing CDPs\n• Rapid changes in stablecoin supply requiring system-wide updates\n• More frequent checks and adjustments for maintaining the peg\n• Need for real-time tracking of global debt ceiling and individual user limits"
-      },
-      {
-        "name": "Governance and Parameters",
-        "ongoing": 50,
-        "volatility": 150,
-        "subMetrics": [
-          {
-            "name": "Stability Fee Adjustments",
-            "ongoing": 20,
-            "volatility": 60,
-            "ongoingExample": "Stability fees are adjusted weekly through governance votes.",
-            "volatilityExample": "Emergency fee adjustments implemented rapidly during crisis events.",
-            "assumptions": "Assumes a basic governance system with occasional participation from the 100 users, capable of handling weekly votes and emergency actions."
-          },
-          {
-            "name": "Debt Ceiling Management",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "Debt ceilings are reviewed and adjusted monthly.",
-            "volatilityExample": "Real-time debt ceiling adjustments to manage system risk during volatility.",
-            "assumptions": "Assumes periodic debt ceiling reviews suitable for the CDP activity of 100 users, with flexibility for rapid adjustments."
-          },
-          {
-            "name": "Collateral Type Onboarding",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "New collateral types are added quarterly after thorough review.",
-            "volatilityExample": "Rapid integration of safe-haven assets during market-wide instability.",
-            "assumptions": "Assumes infrequent collateral type additions, with capacity to expedite the process when necessary for 100 users."
-          }
-        ],
-        "explanation": "Governance and parameter updates require more DA due to:\n• Implementation of complex, multi-step governance decisions\n• Need for rapid parameter adjustments during market stress\n• System-wide updates for new collateral types or risk parameters\n• Increased monitoring and simulation of parameter impacts on system stability"
       }
     ],
     "scenarios": [
       {
-        "name": "Stablecoin De-pegging Event",
-        "description": "During a stablecoin de-pegging event, DA requirements spike dramatically due to:\n• Continuous price feed updates from multiple oracles\n• Surge in CDP adjustments, closures, and new openings\n• Mass minting/burning operations to stabilize the peg\n• Increased governance activities for emergency measures",
-        "impact": 95
+        "title": "Market Volatility and Cross-Chain CDP Management",
+        "daScaling": "Exponential during high volatility",
+        "relativeDAScore": 10,
+        "analysis": "Rapid market fluctuations lead to cascading liquidations, impacting collateralized debt positions.",
+        "implications": "Ultra-fast cross-chain oracles and predictive modeling are essential to prevent liquidation cascades and maintain system stability."
       },
       {
-        "name": "New Collateral Type Addition",
-        "description": "Adding a new collateral type increases DA demand due to:\n• System-wide updates to incorporate new collateral parameters\n• Surge in CDP creations using the new collateral\n• Increased oracle activity for pricing the new asset\n• Heightened monitoring of system health with the new collateral",
-        "impact": 80
+        "title": "Large-Scale Stablecoin Minting/Burning by AI Agents",
+        "daScaling": "Exponential during coordinated actions",
+        "relativeDAScore": 9,
+        "analysis": "Coordinated minting and burning activities by AI agents require precise real-time data to balance supply and demand.",
+        "implications": "Real-time system-wide state management is crucial to ensure efficiency and maintain stablecoin peg stability."
       },
       {
-        "name": "Governance Attack Mitigation",
-        "description": "Mitigating a governance attack causes DA spikes due to:\n• Rapid implementation of emergency shutdown procedures\n• Mass processing of CDP closures and collateral returns\n• Increased communication and state updates to all network participants\n• Continuous monitoring and counteraction of malicious activities",
-        "impact": 90
+        "title": "Dynamic Governance for Risk Management",
+        "daScaling": "Linear with periodic spikes",
+        "relativeDAScore": 8,
+        "analysis": "Ongoing governance activities, including parameter changes and risk assessments, require consistent data flow.",
+        "implications": "Efficient cross-chain governance mechanisms are critical to prevent DA congestion and ensure timely decision-making during parameter updates."
+      },
+      {
+        "title": "Sudden De-Pegging Events",
+        "daScaling": "High, short-term",
+        "relativeDAScore": 10,
+        "analysis": "Rapid de-pegging events trigger emergency actions to restore stability, requiring immediate data access.",
+        "implications": "Robust DA is vital for quick corrective measures, ensuring the stability and confidence in the stablecoin ecosystem."
+      },
+      {
+        "title": "Mass Liquidations Due to Collateral Revaluation",
+        "daScaling": "High, sustained",
+        "relativeDAScore": 9,
+        "analysis": "Sudden collateral value drops lead to mass liquidations, impacting market conditions.",
+        "implications": "High DA is necessary for efficient liquidation processes, preventing further market destabilization and protecting asset values."
       }
     ]
   },
@@ -362,96 +501,112 @@
     "metrics": [
       {
         "name": "Asset Transfers",
-        "ongoing": 70,
-        "volatility": 210,
+        "ongoing": 3.4,
+        "volatility": 65.5,
         "subMetrics": [
           {
             "name": "Transaction Verification",
-            "ongoing": 30,
-            "volatility": 90,
-            "ongoingExample": "Cross-chain transactions are verified every 5 minutes on average.",
-            "volatilityExample": "Verification frequency increases to every 30 seconds during high-volume periods.",
-            "assumptions": "Assumes occasional cross-chain transactions from the 100 users, with capacity for increased frequency during high activity periods."
+            "ongoing": 1.75,
+            "volatility": 17.5,
+            "ongoingExample": "Cross-chain transactions are verified 5 times per second on average.\nEach transaction verification is 350 bytes, accounting for more complex cross-chain verifications.",
+            "volatilityExample": "Verification frequency increases to 50 times per second during high-volume periods.",
+            "assumptions": "Measures the verification of transactions related to cross-chain asset transfers.\nAssumes occasional cross-chain transactions from the 100 users, with capacity for increased frequency during high activity periods.\nScales superlinearly due to the increased number of transactions and verifications required as more agents participate, but with optimizations at scale."
           },
           {
             "name": "Liquidity Management",
-            "ongoing": 25,
-            "volatility": 75,
-            "ongoingExample": "Liquidity pools for cross-chain assets are rebalanced hourly.",
-            "volatilityExample": "Continuous rebalancing during periods of high transfer volume.",
-            "assumptions": "Assumes moderate-sized liquidity pools suitable for cross-chain activity of 100 users, with adaptability for volume spikes."
+            "ongoing": 0.9,
+            "volatility": 18,
+            "ongoingExample": "Liquidity pools for cross-chain assets are rebalanced 2 times per second.",
+            "volatilityExample": "Continuous rebalancing during periods of high transfer volume results in 40 rebalances per second.",
+            "assumptions": "Measures the management of liquidity across chains to ensure smooth transfers.\nAssumes moderate-sized liquidity pools suitable for cross-chain activity of 100 users, with adaptability for volume spikes.\nEach liquidity management action is 450 bytes, accounting for more comprehensive liquidity management across multiple chains.\nScales exponentially as the complexity of managing liquidity across chains increases with more participants, but with slight optimizations at scale."
           },
           {
             "name": "Fee Calculation",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "Transfer fees are recalculated daily based on network conditions.",
-            "volatilityExample": "Real-time fee adjustments during congestion or attack scenarios.",
-            "assumptions": "Assumes a basic fee calculation system capable of handling the cross-chain transaction volume from 100 users."
+            "ongoing": 0.5,
+            "volatility": 5,
+            "ongoingExample": "Transfer fees are recalculated 2 times per second based on network conditions.\nEach fee calculation remains at 250 bytes.",
+            "volatilityExample": "Real-time fee adjustments during congestion or attack scenarios lead to 20 recalculations per second.",
+            "assumptions": "Measures the calculation of fees for cross-chain transactions.\nAssumes a basic fee calculation system capable of handling the cross-chain transaction volume from 100 users.\nScales superlinearly with the number of transactions requiring fee calculations, but with optimizations at scale."
+          },
+          {
+            "name": "Transaction Finality Confirmation",
+            "ongoing": 0.25,
+            "volatility": 25,
+            "ongoingExample": "Cross-chain transaction finality is confirmed 1 time per second.\nEach finality confirmation is 250 bytes, accounting for more comprehensive confirmation data.",
+            "volatilityExample": "Finality confirmation rate increases to 100 times per second during high-activity periods.",
+            "assumptions": "Measures the confirmation that cross-chain transactions have reached finality.\nAssumes standard finality confirmation processes for cross-chain transactions involving 100 users.\nScales superlinearly as more transactions require finality confirmations, but with optimizations at scale."
           }
         ],
         "explanation": "Asset transfer DA increases due to:\n• Higher frequency of cross-chain transaction verifications\n• Rapid updates to liquidity pools across multiple chains\n• More complex fee calculations considering multi-chain conditions\n• Need for real-time tracking of in-flight transactions across chains"
       },
       {
         "name": "State Synchronization",
-        "ongoing": 80,
-        "volatility": 240,
+        "ongoing": 7.16,
+        "volatility": 121.6,
         "subMetrics": [
           {
             "name": "Block Header Relay",
-            "ongoing": 35,
-            "volatility": 105,
-            "ongoingExample": "Block headers are relayed between chains every 10 minutes.",
-            "volatilityExample": "Header relay frequency increases to every block during high-activity periods.",
-            "assumptions": "Assumes regular block header relay suitable for the cross-chain activity level of 100 users, with ability to increase frequency when needed."
+            "ongoing": 1.2,
+            "volatility": 12,
+            "ongoingExample": "Block headers are relayed between chains 1 time per second.\nEach block header relay is 1,200 bytes, accounting for more comprehensive block headers.",
+            "volatilityExample": "Header relay frequency increases to 10 times per second during high-activity periods.",
+            "assumptions": "Measures the frequency and size of block header relays between chains.\nAssumes regular block header relay suitable for the cross-chain activity level of 100 users, with ability to increase frequency when needed.\nScales exponentially as the number of relays increases with more participants, but with slight optimizations at scale."
           },
           {
             "name": "Merkle Proof Verification",
-            "ongoing": 30,
-            "volatility": 90,
-            "ongoingExample": "Merkle proofs for cross-chain data are verified every 30 minutes.",
-            "volatilityExample": "Continuous proof verification during large-scale cross-chain operations.",
-            "assumptions": "Assumes periodic Merkle proof verifications for the expected cross-chain data volume from 100 users, with capacity for continuous verification during peak times."
+            "ongoing": 0.64,
+            "volatility": 6.4,
+            "ongoingExample": "Merkle proofs for cross-chain data are verified 2 times per second.\nEach Merkle proof verification remains at 320 bytes.",
+            "volatilityExample": "Continuous proof verification during large-scale cross-chain operations leads to 20 verifications per second.",
+            "assumptions": "Measures the verification of Merkle proofs for cross-chain transactions.\nAssumes periodic Merkle proof verifications for the expected cross-chain data volume from 100 users, with capacity for continuous verification during peak times.\nScales superlinearly with the number of transactions requiring verification, but with optimizations at scale."
           },
           {
             "name": "Consensus Mechanism Updates",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "Validator set changes are propagated across chains daily.",
-            "volatilityExample": "Rapid validator set updates during network attacks or failures.",
-            "assumptions": "Assumes a basic consensus mechanism with infrequent updates, suitable for managing cross-chain operations for 100 users."
+            "ongoing": 5,
+            "volatility": 100,
+            "ongoingExample": "Validator set changes are propagated across chains 0.5 times per second.\nEach consensus update is 10,000 bytes, accounting for more complex consensus updates across multiple chains.",
+            "volatilityExample": "Rapid validator set updates during network attacks or failures result in 5 updates per second.",
+            "assumptions": "Measures the updates to the consensus mechanism across chains.\nAssumes a basic consensus mechanism with infrequent updates, suitable for managing cross-chain operations for 100 users.\nScales exponentially due to the need for frequent updates to maintain consensus across chains, but with slight optimizations at scale."
+          },
+          {
+            "name": "State Commitments",
+            "ongoing": 0.32,
+            "volatility": 3.2,
+            "ongoingExample": "State commitments are made 1 time per second to ensure consistency.\nEach state commitment is 320 bytes, accounting for a comprehensive state commitments, 32 bytes for the hash (e.g., SHA-256), across up to 10 chains.",
+            "volatilityExample": "Commitment frequency increases to 10 times per second during high cross-chain activity.",
+            "assumptions": "Measures the frequency of state commitments to ensure consistency across chains.\nAssumes regular state commitment processes suitable for managing cross-chain consistency for 100 users.\nScales superlinearly as the complexity of maintaining state consistency increases, but with optimizations at scale."
           }
         ],
         "explanation": "State synchronization DA spikes due to:\n• Increased frequency of block header relays between chains\n• More complex and frequent Merkle proof verifications\n• Rapid propagation of consensus mechanism updates across chains\n• Need for maintaining consistent state across multiple blockchain networks"
       },
       {
         "name": "Interoperability Protocol Management",
-        "ongoing": 60,
-        "volatility": 180,
+        "ongoing": 1.85,
+        "volatility": 185,
         "subMetrics": [
           {
             "name": "Protocol Version Control",
-            "ongoing": 20,
-            "volatility": 60,
-            "ongoingExample": "Interoperability protocol versions are checked daily across all integrated chains.",
-            "volatilityExample": "Real-time version checks and updates during critical protocol upgrades.",
-            "assumptions": "Assumes basic version control mechanisms suitable for managing interoperability for 100 users across a limited number of integrated chains."
+            "ongoing": 0.1,
+            "volatility": 10,
+            "ongoingExample": "Interoperability protocol versions are checked 0.1 times per second across all integrated chains.\nEach protocol version update is 1,000 bytes, accounting for more comprehensive version control data.",
+            "volatilityExample": "Real-time version checks and updates during critical protocol upgrades result in 10 checks per second.",
+            "assumptions": "Measures the frequency of updates and management of protocol versions across chains.\nAssumes basic version control mechanisms suitable for managing interoperability for 100 users across a limited number of integrated chains.\nScales logarithmically as the number of agents increases, reflecting optimizations and less frequent updates relative to the number of agents at scale."
           },
           {
             "name": "Cross-Chain Contract Calls",
-            "ongoing": 25,
-            "volatility": 75,
-            "ongoingExample": "Cross-chain smart contract calls are processed every 5 minutes.",
-            "volatilityExample": "Continuous processing of contract calls during multi-chain DApp events.",
-            "assumptions": "Assumes occasional cross-chain contract calls from the 100 users, with capacity to handle increased frequency during popular DApp events."
+            "ongoing": 1.5,
+            "volatility": 150,
+            "ongoingExample": "Cross-chain smart contract calls are processed 1 time per second.\nEach cross-chain contract call is 1,500 bytes, accounting for more complex cross-chain calls.",
+            "volatilityExample": "Continuous processing of contract calls during multi-chain DApp events results in 100 calls per second.",
+            "assumptions": "Measures the frequency and size of contract calls between chains.\nAssumes occasional cross-chain contract calls from the 100 users, with capacity to handle increased frequency during popular DApp events.\nScales exponentially as the number of contract calls increases with more participants, but with slight optimizations at scale."
           },
           {
             "name": "Bridging Security Monitoring",
-            "ongoing": 15,
-            "volatility": 45,
-            "ongoingExample": "Security audits of bridge contracts are performed weekly.",
-            "volatilityExample": "Continuous monitoring and real-time alerts during suspected bridge exploits.",
-            "assumptions": "Assumes basic security monitoring for cross-chain bridges, suitable for the activity level of 100 users, with enhanced monitoring capabilities during security events."
+            "ongoing": 0.25,
+            "volatility": 25,
+            "ongoingExample": "Security audits of bridge contracts are performed 0.5 times per second.\nEach security monitoring event is 500 bytes, accounting for more comprehensive security monitoring across multiple chains and bridges.",
+            "volatilityExample": "Continuous monitoring and real-time alerts during suspected bridge exploits lead to 50 audits per second.",
+            "assumptions": "Measures the monitoring and management of security for cross-chain bridges.\nAssumes basic security monitoring for cross-chain bridges, suitable for the activity level of 100 users, with enhanced monitoring capabilities during security events.\nScales superlinearly as the complexity of security monitoring increases with more participants, but with optimizations at scale."
           }
         ],
         "explanation": "Interoperability protocol management DA requirements increase due to:\n• Need for consistent protocol versions across multiple chains\n• Increased complexity and frequency of cross-chain contract calls\n• Enhanced security monitoring of bridge contracts and transactions\n• Rapid response mechanisms for cross-chain security incidents"
@@ -459,19 +614,46 @@
     ],
     "scenarios": [
       {
-        "name": "Large-Scale Cross-Chain DeFi Event",
-        "description": "During a major cross-chain DeFi event (e.g., a popular yield farming opportunity), DA requirements spike due to:\n• Surge in cross-chain asset transfers and liquidity movements\n• Increased frequency of state synchronization between chains\n• Higher demand for real-time data about conditions on multiple chains\n• Need for rapid fee adjustments to manage network congestion",
-        "impact": 90
+        "title": "Cross-Chain Security Incidents",
+        "daScaling": "Exponential, short-term",
+        "relativeDAScore": 10,
+        "analysis": "Security breaches require immediate DA to propagate alerts and facilitate rapid response across chains.",
+        "implications": "Robust, real-time data availability is crucial to contain threats and ensure network integrity, preventing cascading failures."
       },
       {
-        "name": "Interoperability Protocol Upgrade",
-        "description": "A significant upgrade to the interoperability protocol increases DA demand due to:\n• Coordinated update of protocol versions across all participating chains\n• Temporary increase in state synchronization to ensure consistency\n• Surge in security monitoring during and after the upgrade\n• Increased user communications and state updates across chains",
-        "impact": 85
+        "title": "Massive Cross-Chain Asset Transfers",
+        "daScaling": "High, sustained",
+        "relativeDAScore": 9,
+        "analysis": "Large volumes of asset transfers increase DA requirements for transaction verifications and liquidity management.",
+        "implications": "Scalable DA systems are essential to handle increased transaction loads, ensuring seamless asset movements and preventing bottlenecks."
       },
       {
-        "name": "Cross-Chain Security Incident",
-        "description": "Managing a cross-chain security incident (e.g., a bridge exploit) causes DA spikes due to:\n• Immediate freeze of cross-chain transfers and contract calls\n• Rapid propagation of security alerts across all connected chains\n• Intensive auditing and verification of recent cross-chain transactions\n• Coordinated effort to implement emergency mitigation measures",
-        "impact": 95
+        "title": "Simultaneous Protocol Upgrades",
+        "daScaling": "High, short-term",
+        "relativeDAScore": 8,
+        "analysis": "Protocol upgrades across multiple chains demand synchronized version control and increased DA for updates.",
+        "implications": "Enhanced DA is needed to manage version compatibility and ensure smooth protocol transitions, maintaining network stability."
+      },
+      {
+        "title": "Coordinated Cross-Chain Arbitrage",
+        "daScaling": "Exponential",
+        "relativeDAScore": 9,
+        "analysis": "AI agents exploit price differences across chains, requiring rapid data access and transaction execution.",
+        "implications": "Immediate DA is crucial for efficient trade execution, minimizing arbitrage risks and maintaining market efficiency."
+      },
+      {
+        "title": "Rapid Onboarding of New Chains",
+        "daScaling": "High, sustained",
+        "relativeDAScore": 8,
+        "analysis": "Integrating new chains into existing networks requires increased DA for protocol compatibility and data synchronization.",
+        "implications": "Scalable DA solutions are essential to ensure seamless onboarding and maintain interoperability across networks."
+      },
+      {
+        "title": "Dynamic Bridging Mechanisms",
+        "daScaling": "Moderate, sustained",
+        "relativeDAScore": 7,
+        "analysis": "Frequent updates to bridging protocols necessitate continuous DA to support secure and efficient cross-chain transactions.",
+        "implications": "Robust DA is vital for maintaining bridge security and optimizing transaction flows, ensuring reliable cross-chain interactions."
       }
     ]
   }
