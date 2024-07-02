@@ -550,15 +550,23 @@ const DeFiDashboard = () => {
       <IntroductionSection introduction={introductionData} />
       
       <div className="mb-4 flex justify-between items-center">
-        <div>
+      <div>
           <button
-            className={`px-4 py-2 rounded-l ${viewMode === 'ongoing' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+            className={`px-4 py-2 rounded-l ${
+              viewMode === 'ongoing' 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-blue-200'
+            }`}
             onClick={() => setViewMode('ongoing')}
           >
             Ongoing DA
           </button>
           <button
-            className={`px-4 py-2 rounded-r ${viewMode === 'volatility' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+            className={`px-4 py-2 rounded-r ${
+              viewMode === 'volatility' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-green-200'
+            }`}
             onClick={() => setViewMode('volatility')}
           >
             Volatility DA
