@@ -535,7 +535,7 @@ const ScenarioLineChart = ({ scenarios }) => {
   };
 
   return (
-    <div className="w-full mb-16" ref={chartRef}>
+    <div className="w-full mt-16 mb-16" ref={chartRef}>
       <h4 className="text-xl font-semibold mb-8 text-gray-700">High-Impact Scenarios</h4>
       <svg width={dimensions.width} height={dimensions.height}>
         <g transform={`translate(${margin.left},${margin.top})`}>
