@@ -250,9 +250,8 @@ const EnhancedSectionPanel = ({ section, data, isActive, onClick, viewMode, tota
     setHoveredSegment(null);
   };
 
-  const overlayHeight = viewMode === 'ongoing' 
-    ? `${(totalDA / maxOngoing) * 100}%`
-    : `${(totalDA / maxVolatility) * 100}%`;
+  const maxDA = viewMode === 'ongoing' ? maxOngoing : maxVolatility;
+  const overlayHeight = `${(totalDA / maxDA) * 100}%`;
   const overlayColor = viewMode === 'ongoing' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(34, 197, 94, 0.1)';
 
   return (
@@ -289,7 +288,7 @@ const EnhancedSectionPanel = ({ section, data, isActive, onClick, viewMode, tota
             </div>
           )}
         </div>
-        <p className="text-sm text-center">Total {viewMode === 'ongoing' ? 'Ongoing' : 'Volatility'} DA: {totalDA}</p>
+        <p className="text-sm text-center">Total {viewMode === 'ongoing' ? 'Ongoing' : 'Volatility'} DA: {totalDA.toFixed(2)} kB/s</p>
       </div>
     </div>
   );
@@ -363,36 +362,96 @@ const DeFiDashboard = () => {
   const [activeSection, setActiveSection] = React.useState('dex');
   const [viewMode, setViewMode] = React.useState('ongoing');
   const [currentDataset, setCurrentDataset] = React.useState('100');
+  const [error, setError] = React.useState(null);
+  const [dashboardData, setDashboardData] = React.useState(null);
   const [introductionData, setIntroductionData] = React.useState(null);
 
   const datasetOptions = [
-    { value: '100', label: '100 Agents', filename: 'Defi100agents.json' },
-    { value: '100k', label: '100k Agents', filename: 'Defi100kagents.json' },
-    { value: '100M', label: '100M Agents', filename: 'Defi100magents.json' },
-    { value: '0.1T', label: '0.1T Agents', filename: 'Defi01tagents.json' },
+    { value: '100', label: '100 Agents', metricsFile: 'Defi100agents.json', scenariosFile: 'DScenarios100agents.json' },
+    { value: '100k', label: '100k Agents', metricsFile: 'Defi100kagents.json', scenariosFile: 'DScenarios100kagents.json' },
+    { value: '100M', label: '100M Agents', metricsFile: 'Defi100magents.json', scenariosFile: 'DScenarios100magents.json' },
+    { value: '0.1T', label: '0.1T Agents', metricsFile: 'Defi01tagents.json', scenariosFile: 'DScenarios01tagents.json' },
   ];
 
   const fetchData = async (datasetValue) => {
-    const dataset = datasetOptions.find(option => option.value === datasetValue);
-    const response = await fetch(dataset.filename);
-    return await response.json();
+    try {
+      const dataset = datasetOptions.find(option => option.value === datasetValue);
+      if (!dataset) {
+        throw new Error(`Dataset not found for value: ${datasetValue}`);
+      }
+
+      const [metricsResponse, scenariosResponse] = await Promise.all([
+        fetch(dataset.metricsFile),
+        fetch(dataset.scenariosFile)
+      ]);
+
+      if (!metricsResponse.ok || !scenariosResponse.ok) {
+        throw new Error(`HTTP error! Metrics status: ${metricsResponse.status}, Scenarios status: ${scenariosResponse.status}`);
+      }
+
+      const [metricsData, scenariosData] = await Promise.all([
+        metricsResponse.json(),
+        scenariosResponse.json()
+      ]);
+      
+      // Combine metrics and scenarios data
+      const combinedData = {};
+      for (const key in metricsData) {
+        if (!scenariosData[key]) {
+          console.warn(`No scenario data found for section: ${key}`);
+        }
+        combinedData[key] = {
+          ...metricsData[key],
+          scenarios: scenariosData[key]?.scenarios || []
+        };
+      }
+      
+      console.log('Combined data:', combinedData);
+      return combinedData;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error;
+    }
   };
 
   const fetchIntroduction = async () => {
-    const response = await fetch('introduction.json');
-    return await response.json();
+    try {
+      const response = await fetch('introduction.json');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Introduction data:', data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching introduction:', error);
+      throw error;
+    }
   };
 
-  const [dashboardData, setDashboardData] = React.useState(null);
-
   React.useEffect(() => {
-    fetchData(currentDataset).then(setDashboardData);
-    fetchIntroduction().then(setIntroductionData);
+    Promise.all([
+      fetchData(currentDataset).then(setDashboardData),
+      fetchIntroduction().then(setIntroductionData)
+    ]).catch(error => {
+      console.error('Error in useEffect:', error);
+      setError(error.message);
+    });
   }, [currentDataset]);
 
-  if (!dashboardData || !introductionData) return <div>Loading...</div>;
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!dashboardData || !introductionData) {
+    return <div>Loading...</div>;
+  }
 
   const sectionData = dashboardData[activeSection];
+  if (!sectionData) {
+    return <div>Error: No data found for section {activeSection}</div>;
+  }
+
   const maxValue = getMaxValue(sectionData.metrics);
 
   const sectionTotals = Object.entries(dashboardData).reduce((acc, [key, data]) => {
@@ -402,9 +461,10 @@ const DeFiDashboard = () => {
     };
     return acc;
   }, {});
-  
+
   const maxOngoing = Math.max(...Object.values(sectionTotals).map(total => total.ongoing));
   const maxVolatility = Math.max(...Object.values(sectionTotals).map(total => total.volatility));
+
 
   return (
     <div className="p-6 max-w-6xl mx-auto bg-white shadow-lg rounded-lg">
@@ -471,10 +531,8 @@ const DeFiDashboard = () => {
       </div>
 
       <h4 className="text-xl font-semibold mb-6 mt-12 text-gray-700">High-Impact Scenarios</h4>
-      <div className="mt-8"> {/* Add this wrapper div with top margin */}
-        <ScenarioImpactChart scenarios={sectionData.scenarios} />
-      </div>
-      <div className="space-y-6 mt-6">
+      <ScenarioImpactChart scenarios={sectionData.scenarios} />
+      <div className="space-y-6">
         {sectionData.scenarios.map((scenario, index) => (
           <Scenario key={index} scenario={scenario} />
         ))}
