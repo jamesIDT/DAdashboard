@@ -5,7 +5,7 @@
     
     "scenarios": [
       {
-        "title": "Flaash Loan Attacks or Large-Scale Arbitrage Operations",
+        "title": "Flash Loan Attacks or Large-Scale Arbitrage Operations",
         "daScaling": "Exponential but short-lived",
         "relativeDAScore": 9,
         "analysis": "Rapid, simultaneous trades by millions of AI agents cause significant state changes across liquidity pools.",

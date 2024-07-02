@@ -463,20 +463,119 @@ const ScenarioImpactChart = ({ scenarios }) => {
   );
 };
 
-const Scenario = ({ scenario }) => {
-  const barWidth = scenario.relativeDAScore * 10; // 10% per score point
+const ScenarioLineChart = ({ scenarios }) => {
+  const [dimensions, setDimensions] = React.useState({ width: 0, height: 400 });
+  const chartRef = React.useRef(null);
 
+  React.useEffect(() => {
+    const updateDimensions = () => {
+      if (chartRef.current) {
+        setDimensions({
+          width: chartRef.current.offsetWidth,
+          height: 400
+        });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+    };
+  }, []);
+
+  const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+  const width = dimensions.width - margin.left - margin.right;
+  const height = dimensions.height - margin.top - margin.bottom;
+
+  const generateScenarioData = (scenario, duration = 100) => {
+    const data = [];
+    for (let i = 0; i <= duration; i++) {
+      let value;
+      switch (scenario.daScaling) {
+        case 'Exponential but short-lived':
+          value = Math.exp(i / 10) * Math.exp(-(i - 20) * (i - 20) / 200);
+          break;
+        case 'High initial spike, tapering off':
+          value = 100 * Math.exp(-i / 20) + 10;
+          break;
+        case 'Potentially exponential':
+        case 'Exponential':
+          value = Math.exp(i / 30);
+          break;
+        case 'High, sustained':
+          value = 80 + Math.sin(i / 5) * 20;
+          break;
+        case 'High, short-term':
+          value = 100 * Math.exp(-i / 10) + 20;
+          break;
+        case 'Linear growth with periodic spikes':
+          value = i + 50 * Math.sin(i / 10) ** 2;
+          break;
+        case 'Moderate, sustained':
+          value = 50 + Math.sin(i / 10) * 10;
+          break;
+        default:
+          value = 50;
+      }
+      data.push({ time: i, value: Math.max(0, Math.min(100, value)) });
+    }
+    return data;
+  };
+
+  const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088FE', '#00C49F'];
+
+  const xScale = (x) => (x / 100) * width;
+  const yScale = (y) => height - (y / 100) * height;
+
+  const renderLine = (data, color) => {
+    const points = data.map((d) => `${xScale(d.time)},${yScale(d.value)}`).join(' ');
+    return <polyline fill="none" stroke={color} strokeWidth="2" points={points} />;
+  };
+
+  return (
+    <div className="w-full mb-16" ref={chartRef}>
+      <h4 className="text-xl font-semibold mb-8 text-gray-700">High-Impact Scenarios</h4>
+      <svg width={dimensions.width} height={dimensions.height}>
+        <g transform={`translate(${margin.left},${margin.top})`}>
+          {/* X and Y axes */}
+          <line x1="0" y1={height} x2={width} y2={height} stroke="black" />
+          <line x1="0" y1="0" x2="0" y2={height} stroke="black" />
+
+          {/* X-axis label */}
+          <text x={width / 2} y={height + 25} textAnchor="middle">Time</text>
+
+          {/* Y-axis label */}
+          <text x={-30} y={height / 2} textAnchor="middle" transform={`rotate(-90 -30 ${height / 2})`}>DA Impact</text>
+
+          {/* Render lines for each scenario */}
+          {scenarios.map((scenario, index) => {
+            const data = generateScenarioData(scenario);
+            return renderLine(data, colors[index % colors.length]);
+          })}
+        </g>
+      </svg>
+
+      {/* Legend */}
+      <div className="flex flex-wrap justify-center mt-4">
+        {scenarios.map((scenario, index) => (
+          <div key={index} className="flex items-center mr-4 mb-2">
+            <div style={{ width: 20, height: 20, backgroundColor: colors[index % colors.length], marginRight: 5 }}></div>
+            <span>{scenario.title}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+const Scenario = ({ scenario }) => {
   return (
     <div className="mb-6 p-4 bg-gray-100 rounded-lg">
       <h4 className="font-semibold mb-2">{scenario.title}</h4>
       <p className="text-sm font-semibold mb-1">
         <span className="text-black">DA Scaling:</span> {scenario.daScaling}
       </p>
-      <div className="flex items-center mb-2">
-        <span className="text-sm font-semibold mr-2">Relative DA Score:</span>
-        <div className="bg-blue-500 h-4 rounded" style={{ width: `${barWidth}%` }}></div>
-        <span className="ml-2 text-sm font-semibold">{scenario.relativeDAScore}</span>
-      </div>
       <p className="text-sm text-gray-700 mb-2">
         <span className="font-semibold text-black">Analysis:</span> {scenario.analysis}
       </p>
@@ -606,7 +705,7 @@ const DeFiDashboard = () => {
       <IntroductionSection introduction={introductionData} />
       
       <div className="mb-4 flex justify-between items-center">
-      <div>
+        <div>
           <button
             className={`px-4 py-2 rounded-l ${
               viewMode === 'ongoing' 
@@ -676,8 +775,7 @@ const DeFiDashboard = () => {
         ))}
       </div>
 
-      <h4 className="text-xl font-semibold mb-6 mt-12 text-gray-700">High-Impact Scenarios</h4>
-      <ScenarioImpactChart scenarios={sectionData.scenarios} />
+      <ScenarioLineChart scenarios={sectionData.scenarios} />
       <div className="space-y-6">
         {sectionData.scenarios.map((scenario, index) => (
           <Scenario key={index} scenario={scenario} />
@@ -686,6 +784,7 @@ const DeFiDashboard = () => {
     </div>
   );
 };
+
 ReactDOM.render(
   <React.StrictMode>
     <DeFiDashboard />
