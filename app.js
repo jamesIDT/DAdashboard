@@ -201,6 +201,79 @@ const Metric = ({ metric, maxValue }) => {
   );
 };
 
+const BlockchainCapacityDashboard = ({ totalDA, protocolName }) => {
+  const blockchains = [
+    { name: 'Ethereum', capacity: 1330, color: '#264653' },
+    { name: 'Celestia', capacity: 6670, color: '#2a9d8f' },
+    { name: 'Near', capacity: 16000, color: '#8ecae6' },
+    { name: 'EigenDA', capacity: 15360, color: '#219ebc' },
+    { name: '0G (ZeroGravity)', capacity: 10240, color: '#023047' },
+    { name: 'NuBit', capacity: 14000, color: '#ffb703' },
+    { name: 'Polygon Avail', capacity: 6670, color: '#fb8500' }
+];
+
+const totalCapacity = blockchains.reduce((sum, blockchain) => sum + blockchain.capacity, 0);
+  
+// Distribute DA across all chains proportionally
+const distributedDA = blockchains.map(blockchain => {
+  const proportion = blockchain.capacity / totalCapacity;
+  return Math.min(totalDA * proportion, blockchain.capacity);
+});
+
+return (
+  <div className="mb-8">
+    <h3 className="text-xl font-semibold mb-4">Blockchain Capacity Usage for {protocolName}</h3>
+    <div className="relative h-12 rounded-lg overflow-hidden mb-2">
+      {blockchains.map((blockchain, index) => {
+        const width = (blockchain.capacity / totalCapacity) * 100;
+        const usage = distributedDA[index];
+        const usageWidth = (usage / blockchain.capacity) * 100;
+
+        return (
+          <div
+            key={blockchain.name}
+            className="absolute top-0 bottom-0"
+            style={{
+              left: `${blockchains.slice(0, index).reduce((sum, bc) => sum + (bc.capacity / totalCapacity) * 100, 0)}%`,
+              width: `${width}%`,
+              backgroundColor: index % 2 === 0 ? '#E5E7EB' : '#D1D5DB' // Alternating light and dark grey
+            }}
+          >
+            <div className="h-full w-full relative">
+              <div
+                className="absolute top-0 left-0 bottom-0 transition-all duration-500 ease-in-out"
+                style={{
+                  width: `${usageWidth}%`,
+                  backgroundColor: blockchain.color
+                }}
+              ></div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+    <div className="flex justify-between">
+      {blockchains.map((blockchain, index) => (
+        <div key={blockchain.name} className="text-xs">
+          <span style={{ color: blockchain.color }}>{blockchain.name}</span>
+          <span className="text-gray-600"> ({blockchain.capacity} kB/s)</span>
+          <br />
+          <span className="text-gray-600">Used: {distributedDA[index].toFixed(2)} kB/s</span>
+        </div>
+      ))}
+    </div>
+    <div className="mt-2 text-sm text-gray-600">
+      Total DA for {protocolName}: {totalDA.toFixed(2)} kB/s
+      {totalDA > totalCapacity && (
+        <span className="text-red-500 ml-2">
+          (Exceeds total capacity by {(totalDA - totalCapacity).toFixed(2)} kB/s)
+        </span>
+      )}
+    </div>
+  </div>
+);
+};
+
 const DonutChart = ({ data, colors, size = 100, onHover, onLeave }) => {
   const total = data.reduce((sum, value) => sum + value, 0);
   let startAngle = 0;
@@ -425,15 +498,18 @@ const DeFiDashboard = () => {
       return data;
     } catch (error) {
       console.error('Error fetching introduction:', error);
-      throw error;
+      return null;
     }
   };
 
   React.useEffect(() => {
     Promise.all([
-      fetchData(currentDataset).then(setDashboardData),
-      fetchIntroduction().then(setIntroductionData)
-    ]).catch(error => {
+      fetchData(currentDataset),
+      fetchIntroduction()
+    ]).then(([dashboardData, introData]) => {
+      setDashboardData(dashboardData);
+      setIntroductionData(introData);
+    }).catch(error => {
       console.error('Error in useEffect:', error);
       setError(error.message);
     });
@@ -465,6 +541,7 @@ const DeFiDashboard = () => {
   const maxOngoing = Math.max(...Object.values(sectionTotals).map(total => total.ongoing));
   const maxVolatility = Math.max(...Object.values(sectionTotals).map(total => total.volatility));
 
+  const activeSectionTotalDA = sectionTotals[activeSection][viewMode];
 
   return (
     <div className="p-6 max-w-6xl mx-auto bg-white shadow-lg rounded-lg">
@@ -520,6 +597,11 @@ const DeFiDashboard = () => {
         ))}
       </div>
 
+      <BlockchainCapacityDashboard 
+        totalDA={activeSectionTotalDA} 
+        protocolName={sectionData.name}
+      />
+
       <h3 className="text-2xl font-bold mb-4 text-gray-700">{sectionData.name}</h3>
       <p className="mb-8 text-gray-600">{sectionData.explanation}</p>
 
@@ -540,7 +622,6 @@ const DeFiDashboard = () => {
     </div>
   );
 };
-
 ReactDOM.render(
   <React.StrictMode>
     <DeFiDashboard />
